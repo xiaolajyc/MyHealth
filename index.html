@@ -32,6 +32,29 @@
  <section class="sheet"><div class="sheet-head"><h2 id="modalTitle"></h2><button class="icon-btn" data-close>×</button></div><div id="modalBody"></div></section>
 </div>
 <script src="db.js"></script><script src="app.js"></script>
-<script>if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js"));</script>
+<script>
+if("serviceWorker"in navigator){
+ window.addEventListener("load",async()=>{
+   try{
+     const reg=await navigator.serviceWorker.register("sw.js",{updateViaCache:"none"});
+     reg.update();
+     if(reg.waiting) reg.waiting.postMessage("SKIP_WAITING");
+     reg.addEventListener("updatefound",()=>{
+       const nw=reg.installing;
+       if(!nw)return;
+       nw.addEventListener("statechange",()=>{
+         if(nw.state==="installed" && navigator.serviceWorker.controller){
+           nw.postMessage("SKIP_WAITING");
+         }
+       });
+     });
+     let reloaded=false;
+     navigator.serviceWorker.addEventListener("controllerchange",()=>{
+       if(!reloaded){reloaded=true;location.reload();}
+     });
+   }catch(e){console.error("Service Worker:",e);}
+ });
+}
+</script>
 </body>
 </html>

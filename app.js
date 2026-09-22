@@ -27,11 +27,16 @@ async function render(){
  document.getElementById("pageTitle").textContent=titles[page];
  document.querySelectorAll(".nav-btn").forEach(x=>x.classList.toggle("active",x.dataset.page===page));
  const m=document.getElementById("main");
+ try {
  if(page==="home")m.innerHTML=await home();
- if(page==="record")m.innerHTML=recordPage();
- if(page==="trends")m.innerHTML=await trendsPage();
- if(page==="timeline")m.innerHTML=await timeline();
- if(page==="me")m.innerHTML=await me();
+ else if(page==="record")m.innerHTML=recordPage();
+ else if(page==="trends")m.innerHTML=await trendsPage();
+ else if(page==="timeline")m.innerHTML=await timeline();
+ else if(page==="me")m.innerHTML=await me();
+} catch(err) {
+ console.error(err);
+ m.innerHTML=`<div class="empty"><strong>页面加载失败</strong><br><span class="muted">${esc(err.message||"未知错误")}</span><br><button class="btn" style="margin-top:12px" onclick="location.reload()">重新加载</button></div>`;
+}
 }
 async function home(){
  const events=(await all("healthEvents")).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
@@ -87,14 +92,11 @@ async function timeline(){
  return Object.entries(g).map(([d,a])=>`<div class="timeline-date">${d}</div>${a.map(x=>`<div class="timeline-item"><div class="timeline-card"><span class="time">${new Date(x.timestamp).toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit"})}</span><strong>${x.type==="weight"?"⚖️":x.type==="exercise"?"🏃":"🍽️"} ${esc(x.title)}</strong><small>${esc(x.summary)}</small></div></div>`).join("")}`).join("");
 }
 async function me(){
- const meds=await all("medications"),sups=await all("supplements");
- return `<div class="section-title"><h3>药物</h3><button class="btn" style="flex:0" data-add="medication">＋ 添加</button></div>${meds.map(x=>productCard(x,"medication")).join("")||`<div class="empty">暂无药物</div>`}
- <div class="section-title"><h3>补充剂</h3><button class="btn" style="flex:0" data-add="supplement">＋ 添加</button></div>${sups.map(x=>productCard(x,"supplement")).join("")||`<div class="empty">暂无补充剂</div>`}
- <div class="section-title"><h3>最近服用记录</h3></div><div id="recentMedicationLogs">${await recentLogs()}</div><div class="section-title"><h3>数据</h3></div><div class="settings">
+ return `<div class="hero"><div class="date">个人数据</div><h2>我的</h2><div class="muted">管理本地健康数据。所有数据保存在本机。</div></div>
+ <div class="section-title"><h3>数据管理</h3></div><div class="settings">
  <button class="setting" id="export"><b>📦 导出数据</b><span>JSON ›</span></button>
  <button class="setting" id="import"><b>📥 导入数据</b><span>JSON ›</span></button><input id="fileInput" type="file" accept=".json" hidden>
- </div>`;
-}
+ </div>`}
 async function recentLogs(){const meds=await all("medications"),sups=await all("supplements");const map=new Map([...meds.map(x=>[x.id,{...x,kind:"medication"}]),...sups.map(x=>[x.id,{...x,kind:"supplement"}])]);const logs=[...(await all("medicationLogs")),...(await all("supplementLogs"))].sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp)).slice(0,12);if(!logs.length)return `<div class="empty">还没有服用记录</div>`;return logs.map(l=>{const x=map.get(l.productId);if(!x)return "";return `<div class="row-card"><div class="row-icon">${x.kind==="medication"?"💊":"🧴"}</div><div class="row-main"><strong>${esc(x.name)}</strong><span>${new Date(l.timestamp).toLocaleString("zh-CN",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})} · ${esc(x.dose)}</span></div><span class="status done">已服 ✓</span></div>`}).join("")}
 function productCard(x,k){return `<div class="med-card"><div class="med-top"><div><h3>${k==="medication"?"💊":"🧴"} ${esc(x.name)}</h3><p>${esc(x.dose)} · ${esc(x.frequency)}</p></div><span class="pill">使用中</span></div><div class="mini-actions"><button data-med="${x.id}" data-kind="${k}">编辑</button><button data-take="${x.id}" data-kind="${k}">今日已服</button></div></div>`}
 function showModal(t,b){document.getElementById("modalTitle").textContent=t;document.getElementById("modalBody").innerHTML=b;document.getElementById("modal").classList.remove("hidden")}
