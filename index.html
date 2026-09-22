@@ -17,7 +17,7 @@
 
 .delete-btn{border:0;background:transparent;color:#a8b7b4;font-size:18px;line-height:1;cursor:pointer;padding:5px 7px;flex:none}.delete-btn:hover{color:#c04d4d}.timeline-card{position:relative;padding-right:48px}.timeline-delete{position:absolute;right:8px;bottom:8px;font-size:11px}.settings-card{padding:16px}.setting-label{display:block;font-size:13px;font-weight:750;margin-bottom:8px}.height-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}.height-row input{flex:1;min-width:0;border:1px solid #dce9e6;border-radius:14px;padding:12px;background:#fff;font:inherit}.version-card{padding:16px;display:flex;justify-content:space-between;align-items:center}.version-card strong{color:#168276;font-size:13px}</style>
 <title>我的健康</title>
-<meta name="app-version" content="2.11">
+<meta name="app-version" content="2.12">
 </head>
 <body>
 <div id="app">
@@ -115,7 +115,24 @@ async function home(){
  const diet=events.filter(x=>x.type==="diet" && x.timestamp.slice(0,10)===today());
  const settings=await getSettings(),height=settings.heightCm>0?Number(settings.heightCm):null;
  const bmi=w&&height?Number(w.value)/(height/100)**2:null;
- const bmiInfo=bmi==null?null:(bmi<18.5?["偏低","< 18.5"]:bmi<25?["正常","18.5–24.9"]:bmi<30?["偏高","25.0–29.9"]:["肥胖","≥ 30.0"]);
+ const bmiInfo=(()=>{
+   if(bmi==null||!height)return null;
+   const h=height/100, lo=Math.min(bmi,0);
+   if(bmi<18.5){
+     const upper=18.5*h*h;
+     return ["偏低",`< 18.5 · 体重 < ${upper.toFixed(1)} kg`];
+   }
+   if(bmi<25){
+     const lower=18.5*h*h, upper=25*h*h;
+     return ["正常",`18.5–24.9 · ${lower.toFixed(1)}–${upper.toFixed(1)} kg`];
+   }
+   if(bmi<30){
+     const lower=25*h*h, upper=30*h*h;
+     return ["偏高",`25.0–29.9 · ${lower.toFixed(1)}–${upper.toFixed(1)} kg`];
+   }
+   const lower=30*h*h;
+   return ["肥胖",`≥ 30.0 · 体重 ≥ ${lower.toFixed(1)} kg`];
+ })();
  return `<section class="hero"><div class="date">${new Intl.DateTimeFormat("zh-CN",{year:"numeric",month:"long",day:"numeric",weekday:"long"}).format(new Date())}</div><h2>今天，照顾好自己。</h2><div class="muted">只记录真正有用的健康信息。</div></section>
  <div class="section-title"><h3>今日概览</h3></div><div class="grid">
  ${metric("⚖️","体重",w?`${w.value} kg`:"—",w?fmt(w.timestamp):"暂无记录")}
@@ -140,7 +157,7 @@ async function openRecord(type){
  let body=`<form id="recordForm" class="form"><div class="form-row">${field("日期","date","date",localDate(),true)}${field("时间","time","time",localTime(),true)}</div>`;
  if(type==="weight")body+=`<div class="field"><label>体重 (kg)</label><input name="value" type="number" step="0.1" inputmode="decimal" min="0" placeholder="68.4" required></div><div class="field"><label>体脂率 (%)</label><input name="bodyFat" type="number" step="0.1" inputmode="decimal" min="0" placeholder="可选"></div>`;
  if(type==="exercise")body+=`<div class="field"><label>运动类型</label><select name="activity"><option>步行</option><option>跑步</option><option>骑行</option><option>游泳</option><option>健身</option><option>球类</option><option>其他</option></select></div>${field("持续时间 (分钟)","duration","number","30",true)}${field("距离 (km)","distance","number","")}`;
- if(type==="diet"){const memory=(await getSettings()).foodCalories||{};const opts=Object.entries(memory).map(([food,cal])=>`<option value="${esc(food)}">${esc(food)} · ${esc(cal)} kcal</option>`).join("");body+=`<div class="field"><label>餐次</label><select name="meal"><option>早餐</option><option>午餐</option><option>晚餐</option><option>加餐</option><option>其他</option></select></div><div class="field"><label>吃了什么</label><input id="foodInput" name="food" type="text" list="foodHistory" placeholder="例如 鸡蛋、牛奶、米饭" required><datalist id="foodHistory">${opts}</datalist></div><div class="field"><label>热量 (kcal，可选)</label><input id="calorieInput" name="calories" type="number" step="1" min="0" inputmode="numeric" placeholder="已记录食物会自动带出"></div>`;}
+ if(type==="diet"){const memory=(await getSettings()).foodCalories||{};const opts=Object.entries(memory).map(([food,cal])=>`<option value="${esc(food)}">${esc(food)} · ${esc(cal)} kcal</option>`).join("");body+=`<div class="field"><label>餐次</label><select name="meal"><option>早餐</option><option>午餐</option><option>晚餐</option><option>加餐</option><option>其他</option></select></div><div class="field"><label>吃了什么</label><input id="foodInput" name="food" type="text" list="foodHistory" placeholder="例如 泡面、鸡蛋、牛奶" required><datalist id="foodHistory">${opts}</datalist></div><div class="field"><label>份数</label><input id="quantityInput" name="quantity" type="number" step="0.1" min="0.1" value="1" inputmode="decimal" placeholder="例如 2"></div><div class="field"><label>每份热量 (kcal，可选)</label><input id="calorieInput" name="calories" type="number" step="1" min="0" inputmode="numeric" placeholder="例如每包 500 kcal"></div><div class="field"><label>本次总热量</label><input id="totalCaloriesInput" name="totalCalories" type="number" step="1" min="0" inputmode="numeric" placeholder="自动计算" readonly></div>`;}
  body+=field("备注","note","textarea","")+`<div class="actions"><button class="btn">保存</button><button type="button" class="btn secondary" data-close>取消</button></div></form>`;
  showModal(type==="weight"?"记录体重":type==="exercise"?"记录运动":"记录饮食",body);
  const recordForm=document.getElementById("recordForm");
@@ -150,11 +167,16 @@ async function openRecord(type){
  const timeInput=recordForm.elements.time;
  if(dateInput) dateInput.value=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
  if(timeInput) timeInput.value=`${pad(now.getHours())}:${pad(now.getMinutes())}`;
- if(type==="diet"){const foodInput=recordForm.elements.food,calorieInput=recordForm.elements.calories,memory=(await getSettings()).foodCalories||{};const fill=()=>{const key=foodInput.value.trim();if(key&&memory[key]!=null&&!calorieInput.value)calorieInput.value=memory[key]};foodInput.addEventListener("change",fill);foodInput.addEventListener("blur",fill)}
+ if(type==="diet"){
+   const foodInput=recordForm.elements.food,calorieInput=recordForm.elements.calories,quantityInput=recordForm.elements.quantity,totalInput=recordForm.elements.totalCalories,memory=(await getSettings()).foodCalories||{};
+   const calc=()=>{const q=Number(quantityInput.value)||1,c=Number(calorieInput.value)||0;totalInput.value=c?Math.round(c*q):""};
+   const fill=()=>{const key=foodInput.value.trim();if(key&&memory[key]!=null&&!calorieInput.value)calorieInput.value=memory[key];calc()};
+   foodInput.addEventListener("change",fill);foodInput.addEventListener("blur",fill);calorieInput.addEventListener("input",calc);quantityInput.addEventListener("input",calc);
+}
  recordForm.onsubmit=async e=>{e.preventDefault();let f=new FormData(e.target),x={id:uid(),type,timestamp:localISO(f.get("date"),f.get("time")),createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
  if(type==="weight"){x.value=+f.get("value");x.bodyFat=f.get("bodyFat")?+f.get("bodyFat"):null;x.title="体重";x.summary=`${x.value} kg`}
  else if(type==="exercise"){x.activity=f.get("activity");x.duration=+f.get("duration");x.distance=f.get("distance")?+f.get("distance"):null;x.title=x.activity;x.summary=`${x.duration} min${x.distance?` · ${x.distance} km`:""}`}
- else {x.meal=f.get("meal");x.food=f.get("food");x.calories=f.get("calories")?+f.get("calories"):null;x.title=x.meal;x.summary=x.food+(x.calories?` · ${x.calories} kcal`:"");if(x.food&&x.calories!=null){const memory=(await getSettings()).foodCalories||{};memory[x.food.trim()]=x.calories;await saveSettings({foodCalories:memory})}}
+ else {x.meal=f.get("meal");x.food=f.get("food");x.quantity=f.get("quantity")?+f.get("quantity"):1;x.calories=f.get("calories")?+f.get("calories"):null;x.totalCalories=x.calories!=null?Math.round(x.calories*x.quantity):null;x.title=x.meal;x.summary=`${x.food}${x.quantity!==1?` × ${x.quantity}`:""}${x.totalCalories!=null?` · ${x.totalCalories} kcal`:""}`;if(x.food&&x.calories!=null){const memory=(await getSettings()).foodCalories||{};memory[x.food.trim()]=x.calories;await saveSettings({foodCalories:memory})}}
  x.note=f.get("note")||"";await put("healthEvents",x);closeModal();render()}
 }
 function field(l,n,t="text",p="",req=false){if(t==="textarea")return `<div class="field"><label>${l}</label><textarea name="${n}" placeholder="${p}"></textarea></div>`;const isDateTime=t==="date"||t==="time";return `<div class="field"><label>${l}</label><input name="${n}" type="${t}" ${isDateTime?`value="${esc(p)}"`: `placeholder="${esc(p)}"`} ${req?"required":""}></div>`}
@@ -180,7 +202,7 @@ async function me(){
  <button class="setting" id="export"><b>📦 导出数据</b><span>JSON ›</span></button>
  <button class="setting" id="import"><b>📥 导入数据</b><span>JSON ›</span></button><input id="fileInput" type="file" accept=".json" hidden>
  </div>
- <div class="section-title"><h3>关于</h3></div><div class="card version-card"><span>我的健康</span><strong>版本 2.11</strong></div>`}
+ <div class="section-title"><h3>关于</h3></div><div class="card version-card"><span>我的健康</span><strong>版本 2.12</strong></div>`}
 function showModal(t,b){document.getElementById("modalTitle").textContent=t;document.getElementById("modalBody").innerHTML=b;document.getElementById("modal").classList.remove("hidden")}
 function closeModal(){document.getElementById("modal").classList.add("hidden")}
 (async()=>{try{await openDB();await render()}catch(e){console.error(e);document.getElementById("main").innerHTML=`<div class="empty"><strong>页面加载失败</strong><br><span class="muted">${esc(e.message||"未知错误")}</span><br><button class="btn" style="margin-top:12px" onclick="location.reload()">重新加载</button></div>`}})();
