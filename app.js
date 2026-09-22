@@ -3,15 +3,19 @@ const titles={home:"首页",record:"记录",trends:"趋势",timeline:"时间轴"
 const info={weight:["⚖️","体重"],exercise:["🏃","运动"],medication:["💊","药物"],supplement:["🧴","补充剂"]};
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 const fmt=d=>new Intl.DateTimeFormat("zh-CN",{month:"short",day:"numeric",weekday:"short"}).format(new Date(d));
+function localDate(){const d=new Date(),p=n=>String(n).padStart(2,"0");return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`}
+function localTime(){const d=new Date(),p=n=>String(n).padStart(2,"0");return `${p(d.getHours())}:${p(d.getMinutes())}`}
+function localISO(date,time){return `${date}T${time}:00`}
 
 document.addEventListener("click",async e=>{
  const p=e.target.closest("[data-page]");if(p){page=p.dataset.page;render();return}
  if(e.target.closest("#topAdd")){page="record";render();return}
  if(e.target.closest("[data-close]")){closeModal();return}
  const q=e.target.closest("[data-quick]");if(q)openRecord(q.dataset.quick);
+ if(e.target.closest("#bulkTake"))openBulkTake();
  const m=e.target.closest("[data-med]");if(m)openProduct(m.dataset.kind,m.dataset.med);
  const add=e.target.closest("[data-add]");if(add)openProduct(add.dataset.add,null);
- const take=e.target.closest("[data-take]");if(take){await put(take.dataset.kind==="medication"?"medicationLogs":"supplementLogs",{id:uid(),productId:take.dataset.take,timestamp:new Date().toISOString()});render()}
+ const take=e.target.closest("[data-take]");if(take){const store=take.dataset.kind==="medication"?"medicationLogs":"supplementLogs";const logs=await all(store);const exists=logs.some(x=>x.productId===take.dataset.take&&x.timestamp.slice(0,10)===today());if(!exists){await put(store,{id:uid(),productId:take.dataset.take,timestamp:new Date().toISOString()});take.textContent="已服 ✓";take.classList.add("taken");setTimeout(render,300)}else{take.textContent="今天已记录";take.classList.add("taken")}}
  const remove=e.target.closest("[data-delete]");if(remove){await del(remove.dataset.store,remove.dataset.delete);closeModal();render()}
  if(e.target.closest("#export"))await exportData();
  if(e.target.closest("#import"))document.getElementById("fileInput").click();
@@ -39,15 +43,13 @@ async function home(){
  ${metric("⚖️","体重",w?`${w.value} kg`:"—",w?fmt(w.timestamp):"暂无记录")}
  ${metric("🏃","运动",ex?`${ex.duration} min`:"—",ex?ex.activity:"暂无记录")}
  </div>
- <div class="section-title"><h3>今日用药</h3><button class="link" data-page="me">管理</button></div>
- ${meds.length?meds.map(x=>productRow(x,"medication")).join(""):`<div class="empty">还没有正在使用的药物</div>`}
- <div class="section-title"><h3>今日补充剂</h3><button class="link" data-page="me">管理</button></div>
- ${sups.length?sups.map(x=>productRow(x,"supplement")).join(""):`<div class="empty">还没有正在使用的补充剂</div>`}
+ <div class="section-title"><h3>今日服用</h3><button class="link" data-page="me">管理</button></div>
+ ${meds.length||sups.length?`${meds.map(x=>productRow(x,"medication")).join("")}${sups.map(x=>productRow(x,"supplement")).join("")}<button class="btn bulk-btn" id="bulkTake">✓ 选择多种并一次服用</button>`:`<div class="empty">还没有正在使用的药物或补充剂</div>`}
  <div class="section-title"><h3>最近记录</h3><button class="link" data-page="timeline">全部</button></div>
  ${events.slice(0,4).map(eventRow).join("")||`<div class="empty">还没有记录。点击 ＋ 开始。</div>`}`;
 }
 function metric(i,l,v,s){return `<div class="card metric"><span class="label">${i} ${l}</span><div class="value">${v}</div><div class="sub">${s}</div></div>`}
-function productRow(x,k){return `<div class="row-card"><div class="row-icon">${k==="medication"?"💊":"🧴"}</div><div class="row-main"><strong>${esc(x.name)}</strong><span>${esc(x.dose)} · ${esc(x.frequency)}</span></div><span class="status">${esc((x.times||[]).join(" / "))}</span></div>`}
+function productRow(x,k){return `<div class="row-card"><div class="row-icon">${k==="medication"?"💊":"🧴"}</div><div class="row-main"><strong>${esc(x.name)}</strong><span>${esc(x.dose)} · ${esc(x.frequency)}${x.times?.length?" · "+esc(x.times.join(" / ")):""}</span></div><button class="take-btn" data-take="${x.id}" data-kind="${k}">今日已服</button></div>`}
 function eventRow(x){return `<div class="row-card"><div class="row-icon">${x.type==="weight"?"⚖️":"🏃"}</div><div class="row-main"><strong>${esc(x.title)}</strong><span>${esc(x.summary)}</span></div><span class="status">${new Date(x.timestamp).toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit"})}</span></div>`}
 
 function recordPage(){return `<div class="section-title"><h3>记录什么？</h3><span class="muted">全部手动记录</span></div><div class="quick-grid">
@@ -57,14 +59,28 @@ function recordPage(){return `<div class="section-title"><h3>记录什么？</h3
  <button class="quick" data-quick="supplement"><b>🧴</b><span>补充剂</span></button>
  </div>`}
 
+async function openBulkTake(){
+ const meds=(await all("medications")).filter(x=>x.active!==false),sups=(await all("supplements")).filter(x=>x.active!==false);
+ const products=[...meds.map(x=>({...x,kind:"medication"})),...sups.map(x=>({...x,kind:"supplement"}))];
+ if(!products.length){showModal("一次服用多种",'<div class="empty">还没有正在使用的药物或补充剂。</div>');return}
+ showModal("一次服用多种",`<div class="bulk-list">${products.map(x=>`<label class="bulk-item"><input type="checkbox" value="${x.id}" data-kind="${x.kind}"><span class="row-icon">${x.kind==="medication"?"💊":"🧴"}</span><span><strong>${esc(x.name)}</strong><small>${esc(x.dose)} · ${esc(x.amount||"")}</small></span></label>`).join("")}</div><div class="actions"><button class="btn" id="confirmBulk">确认服用</button><button class="btn secondary" data-close>取消</button></div>`);
+ document.getElementById("confirmBulk").onclick=async()=>{
+   const checks=[...document.querySelectorAll(".bulk-item input:checked")];
+   if(!checks.length){document.getElementById("confirmBulk").textContent="请先选择";setTimeout(()=>document.getElementById("confirmBulk").textContent="确认服用",900);return}
+   const now=new Date().toISOString();
+   for(const c of checks){const store=c.dataset.kind==="medication"?"medicationLogs":"supplementLogs",logs=await all(store);if(!logs.some(x=>x.productId===c.value&&x.timestamp.slice(0,10)===today()))await put(store,{id:uid(),productId:c.value,timestamp:now})}
+   closeModal();render();
+ };
+}
+
 function openRecord(type){
  if(type==="medication"||type==="supplement"){openProduct(type);return}
- let body=`<form id="recordForm" class="form"><div class="form-row">${field("日期","date","date",today(),true)}${field("时间","time","time",new Date().toTimeString().slice(0,5),true)}</div>`;
+ let body=`<form id="recordForm" class="form"><div class="form-row">${field("日期","date","date",localDate(),true)}${field("时间","time","time",localTime(),true)}</div>`;
  if(type==="weight")body+=field("体重 (kg)","value","number","68.4",true)+field("体脂率 (%)","bodyFat","number","");
  if(type==="exercise")body+=`<div class="field"><label>运动类型</label><select name="activity"><option>步行</option><option>跑步</option><option>骑行</option><option>游泳</option><option>健身</option><option>球类</option><option>其他</option></select></div>${field("持续时间 (分钟)","duration","number","30",true)}${field("距离 (km)","distance","number","")}`;
  body+=field("备注","note","textarea","")+`<div class="actions"><button class="btn">保存</button><button type="button" class="btn secondary" data-close>取消</button></div></form>`;
  showModal(type==="weight"?"记录体重":"记录运动",body);
- document.getElementById("recordForm").onsubmit=async e=>{e.preventDefault();let f=new FormData(e.target),x={id:uid(),type,timestamp:`${f.get("date")}T${f.get("time")}:00`,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
+ document.getElementById("recordForm").onsubmit=async e=>{e.preventDefault();let f=new FormData(e.target),x={id:uid(),type,timestamp:localISO(f.get("date"),f.get("time")),createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
  if(type==="weight"){x.value=+f.get("value");x.bodyFat=f.get("bodyFat")?+f.get("bodyFat"):null;x.title="体重";x.summary=`${x.value} kg`}
  else{x.activity=f.get("activity");x.duration=+f.get("duration");x.distance=f.get("distance")?+f.get("distance"):null;x.title=x.activity;x.summary=`${x.duration} min${x.distance?` · ${x.distance} km`:""}`}
  x.note=f.get("note")||"";await put("healthEvents",x);closeModal();render()}
@@ -77,7 +93,7 @@ function openProduct(kind,id=null){
  ${field("名称","name","text",med?"药物名称":"例如 Vitamin D",true)}
  <div class="form-row">${field("剂量","dose","text","例如 10 mg",true)}${field("每次用量","amount","text","例如 1 tablet")}</div>
  <div class="field"><label>频率</label><select name="frequency"><option>每日一次</option><option>每日两次</option><option>每日三次</option><option>每周一次</option><option>隔日一次</option><option>按需</option><option>自定义</option></select></div>
- <div class="form-row">${field("开始日期","startDate","date",today(),true)}${field("结束日期","endDate","date","")}</div>
+ <div class="form-row">${field("开始日期","startDate","date",localDate(),true)}${field("结束日期","endDate","date","")}</div>
  ${field("服用时间","times","text","例如 08:00 或 08:00,20:00")}${field("备注","note","textarea","")}
  <div class="actions"><button class="btn">保存</button><button type="button" class="btn secondary" data-close>取消</button></div></form>`);
  document.getElementById("productForm").onsubmit=async e=>{e.preventDefault();let f=new FormData(e.target),now=new Date().toISOString();await put(med?"medications":"supplements",{id:id||uid(),name:f.get("name"),dose:f.get("dose"),amount:f.get("amount"),frequency:f.get("frequency"),startDate:f.get("startDate"),endDate:f.get("endDate"),times:(f.get("times")||"").split(",").map(x=>x.trim()).filter(Boolean),note:f.get("note"),active:true,createdAt:now,updatedAt:now});closeModal();render()}
@@ -99,11 +115,12 @@ async function me(){
  const meds=await all("medications"),sups=await all("supplements");
  return `<div class="section-title"><h3>药物</h3><button class="btn" style="flex:0" data-add="medication">＋ 添加</button></div>${meds.map(x=>productCard(x,"medication")).join("")||`<div class="empty">暂无药物</div>`}
  <div class="section-title"><h3>补充剂</h3><button class="btn" style="flex:0" data-add="supplement">＋ 添加</button></div>${sups.map(x=>productCard(x,"supplement")).join("")||`<div class="empty">暂无补充剂</div>`}
- <div class="section-title"><h3>数据</h3></div><div class="settings">
+ <div class="section-title"><h3>最近服用记录</h3></div><div id="recentMedicationLogs">${await recentLogs()}</div><div class="section-title"><h3>数据</h3></div><div class="settings">
  <button class="setting" id="export"><b>📦 导出数据</b><span>JSON ›</span></button>
  <button class="setting" id="import"><b>📥 导入数据</b><span>JSON ›</span></button><input id="fileInput" type="file" accept=".json" hidden>
  </div>`;
 }
+async function recentLogs(){const meds=await all("medications"),sups=await all("supplements");const map=new Map([...meds.map(x=>[x.id,{...x,kind:"medication"}]),...sups.map(x=>[x.id,{...x,kind:"supplement"}])]);const logs=[...(await all("medicationLogs")),...(await all("supplementLogs"))].sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp)).slice(0,12);if(!logs.length)return `<div class="empty">还没有服用记录</div>`;return logs.map(l=>{const x=map.get(l.productId);if(!x)return "";return `<div class="row-card"><div class="row-icon">${x.kind==="medication"?"💊":"🧴"}</div><div class="row-main"><strong>${esc(x.name)}</strong><span>${new Date(l.timestamp).toLocaleString("zh-CN",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})} · ${esc(x.dose)}</span></div><span class="status done">已服 ✓</span></div>`}).join("")}
 function productCard(x,k){return `<div class="med-card"><div class="med-top"><div><h3>${k==="medication"?"💊":"🧴"} ${esc(x.name)}</h3><p>${esc(x.dose)} · ${esc(x.frequency)}</p></div><span class="pill">使用中</span></div><div class="mini-actions"><button data-med="${x.id}" data-kind="${k}">编辑</button><button data-take="${x.id}" data-kind="${k}">今日已服</button></div></div>`}
 function showModal(t,b){document.getElementById("modalTitle").textContent=t;document.getElementById("modalBody").innerHTML=b;document.getElementById("modal").classList.remove("hidden")}
 function closeModal(){document.getElementById("modal").classList.add("hidden")}
