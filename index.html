@@ -1,54 +1,37 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#f6fbfa">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="我的健康">
-  <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css">
-  <title>我的健康</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f6fbfa">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="我的健康">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+<title>我的健康</title>
 </head>
 <body>
 <div id="app">
-  <header class="topbar">
-    <div>
-      <div class="eyebrow">MY HEALTH</div>
-      <h1 id="pageTitle">首页</h1>
-    </div>
-    <button class="icon-btn" id="quickAddTop" aria-label="添加">＋</button>
-  </header>
-
-  <main id="main"></main>
-
-  <nav class="bottom-nav" aria-label="主导航">
-    <button data-page="home" class="nav-btn active"><span>⌂</span><small>首页</small></button>
-    <button data-page="record" class="nav-btn"><span>＋</span><small>记录</small></button>
-    <button data-page="trends" class="nav-btn"><span>⌁</span><small>趋势</small></button>
-    <button data-page="timeline" class="nav-btn"><span>☷</span><small>时间轴</small></button>
-    <button data-page="me" class="nav-btn"><span>◉</span><small>我的</small></button>
-  </nav>
+<header class="topbar">
+  <div><div class="eyebrow">MY HEALTH</div><h1 id="pageTitle">首页</h1></div>
+  <button class="icon-btn" id="topAdd">＋</button>
+</header>
+<main id="main"></main>
+<nav class="bottom-nav">
+  <button class="nav-btn active" data-page="home"><span>⌂</span><small>首页</small></button>
+  <button class="nav-btn" data-page="record"><span>＋</span><small>记录</small></button>
+  <button class="nav-btn" data-page="trends"><span>⌁</span><small>趋势</small></button>
+  <button class="nav-btn" data-page="timeline"><span>☷</span><small>时间轴</small></button>
+  <button class="nav-btn" data-page="me"><span>◉</span><small>我的</small></button>
+</nav>
 </div>
-
 <div id="modal" class="modal hidden">
-  <div class="modal-backdrop" data-close-modal></div>
-  <section class="sheet" role="dialog" aria-modal="true">
-    <div class="sheet-head">
-      <h2 id="modalTitle"></h2>
-      <button class="icon-btn" data-close-modal>×</button>
-    </div>
-    <div id="modalBody"></div>
-  </section>
+ <div class="backdrop" data-close></div>
+ <section class="sheet"><div class="sheet-head"><h2 id="modalTitle"></h2><button class="icon-btn" data-close>×</button></div><div id="modalBody"></div></section>
 </div>
-
-<script src="db.js"></script>
-<script src="app.js"></script>
-<script>
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => navigator.serviceWorker.register("sw.js"));
-  }
-</script>
+<script src="db.js"></script><script src="app.js"></script>
+<script>if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js"));</script>
 </body>
 </html>
