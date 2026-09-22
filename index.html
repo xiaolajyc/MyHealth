@@ -15,9 +15,9 @@
 
 
 
-</style>
+.delete-btn{border:0;background:transparent;color:#a8b7b4;font-size:18px;line-height:1;cursor:pointer;padding:5px 7px;flex:none}.delete-btn:hover{color:#c04d4d}.timeline-card{position:relative;padding-right:48px}.timeline-delete{position:absolute;right:8px;bottom:8px;font-size:11px}.settings-card{padding:16px}.setting-label{display:block;font-size:13px;font-weight:750;margin-bottom:8px}.height-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}.height-row input{flex:1;min-width:0;border:1px solid #dce9e6;border-radius:14px;padding:12px;background:#fff;font:inherit}.version-card{padding:16px;display:flex;justify-content:space-between;align-items:center}.version-card strong{color:#168276;font-size:13px}</style>
 <title>我的健康</title>
-<meta name="app-version" content="2.8">
+<meta name="app-version" content="2.9">
 </head>
 <body>
 <div id="app">
@@ -31,11 +31,11 @@
   <button class="nav-btn" data-page="record"><span>＋</span><small>记录</small></button>
   <button class="nav-btn" data-page="trends"><span>⌁</span><small>趋势</small></button>
   <button class="nav-btn" data-page="timeline"><span>☷</span><small>时间轴</small></button>
-  <button class="nav-btn" data-page="me"><span>◉</span><small>我的</small></button>
+  <button class="nav-btn" data-page="me"><span>◉</span><small>设置</small></button>
 </nav>
 </div>
 <div id="modal" class="modal hidden">
- <div class="backdrop" data-close></div>
+ <div class="backdrop"></div>
  <section class="sheet"><div class="sheet-head"><h2 id="modalTitle"></h2><button class="icon-btn" data-close>×</button></div><div id="modalBody"></div></section>
 </div>
 <script>
@@ -66,11 +66,13 @@ async function del(s,id){const d=await openDB();return new Promise((ok,no)=>{con
 function today(){const d=new Date(),p=n=>String(n).padStart(2,"0");return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`}
 async function exportData(){const o={version:3,exportedAt:new Date().toISOString()};for(const s of STORES)o[s]=await all(s);const b=new Blob([JSON.stringify(o,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=`my-health-${today()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 async function importData(file){const x=JSON.parse(await file.text());for(const s of STORES)for(const v of x[s]||[])await put(s,v)}
+async function getSettings(){const rows=await all("settings");return rows.find(x=>x.id==="preferences")||{id:"preferences",heightCm:null,foodCalories:{}}}
+async function saveSettings(patch){const old=await getSettings();const next={...old,...patch,id:"preferences"};await put("settings",next);return next}
 
 </script>
 <script>
 let page="home",trend="weight";
-const titles={home:"首页",record:"记录",trends:"趋势",timeline:"时间轴",me:"我的"};
+const titles={home:"首页",record:"记录",trends:"趋势",timeline:"时间轴",me:"设置"};
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 const fmt=d=>new Intl.DateTimeFormat("zh-CN",{month:"short",day:"numeric",weekday:"short"}).format(new Date(d));
 function localDate(){const d=new Date(),p=n=>String(n).padStart(2,"0");return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`}
@@ -83,7 +85,8 @@ document.addEventListener("click",async e=>{
  if(e.target.closest("[data-close]")){closeModal();return}
  const q=e.target.closest("[data-quick]");if(q)openRecord(q.dataset.quick);
 
- const remove=e.target.closest("[data-delete]");if(remove){await del(remove.dataset.store,remove.dataset.delete);closeModal();render()}
+ const remove=e.target.closest("[data-delete]");if(remove){e.preventDefault();e.stopPropagation();if(confirm("确定删除这条记录吗？")){await del(remove.dataset.store,remove.dataset.delete);render()}return}
+ if(e.target.closest("#saveHeight")){const v=Number(document.getElementById("heightInput").value);if(v>=50&&v<=250){await saveSettings({heightCm:v});render()}return}
  if(e.target.closest("#export"))await exportData();
  if(e.target.closest("#import"))document.getElementById("fileInput").click();
  const tr=e.target.closest("[data-trend]");if(tr){trend=tr.dataset.trend;render()}
@@ -110,10 +113,14 @@ async function home(){
  const w=events.filter(x=>x.type==="weight").sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp))[0];
  const ex=events.filter(x=>x.type==="exercise").sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp))[0];
  const diet=events.filter(x=>x.type==="diet" && x.timestamp.slice(0,10)===today());
+ const settings=await getSettings(),height=settings.heightCm>0?Number(settings.heightCm):null;
+ const bmi=w&&height?Number(w.value)/(height/100)**2:null;
+ const bmiInfo=bmi==null?null:(bmi<18.5?["偏低","BMI < 18.5"]:bmi<25?["正常","BMI 18.5–24.9"]:bmi<30?["偏高","BMI 25–29.9"]:["肥胖范围","BMI ≥ 30"]);
  return `<section class="hero"><div class="date">${new Intl.DateTimeFormat("zh-CN",{year:"numeric",month:"long",day:"numeric",weekday:"long"}).format(new Date())}</div><h2>今天，照顾好自己。</h2><div class="muted">只记录真正有用的健康信息。</div></section>
  <div class="section-title"><h3>今日概览</h3></div><div class="grid">
  ${metric("⚖️","体重",w?`${w.value} kg`:"—",w?fmt(w.timestamp):"暂无记录")}
  ${metric("🏃","运动",ex?`${ex.duration} min`:"—",ex?ex.activity:"暂无记录")}
+ ${metric("📏","BMI",bmi?bmi.toFixed(1):"—",bmiInfo?bmiInfo[0]:(height?"暂无体重":"请在设置中输入身高"))}
  </div>
  <div class="section-title"><h3>今日饮食</h3><button class="link" data-page="record">添加</button></div>
  ${diet.map(eventRow).join("")||`<div class="empty">今天还没有饮食记录</div>`}
@@ -121,7 +128,7 @@ async function home(){
  ${events.slice(0,4).map(eventRow).join("")||`<div class="empty">还没有记录。点击 ＋ 开始。</div>`}`;
 }
 function metric(i,l,v,s){return `<div class="card metric"><span class="label">${i} ${l}</span><div class="value">${v}</div><div class="sub">${s}</div></div>`}
-function eventRow(x){return `<div class="row-card"><div class="row-icon">${x.type==="weight"?"⚖️":x.type==="exercise"?"🏃":"🍽️"}</div><div class="row-main"><strong>${esc(x.title)}</strong><span>${esc(x.summary)}</span></div><span class="status">${new Date(x.timestamp).toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit"})}</span></div>`}
+function eventRow(x){return `<div class="row-card"><div class="row-icon">${x.type==="weight"?"⚖️":x.type==="exercise"?"🏃":"🍽️"}</div><div class="row-main"><strong>${esc(x.title)}</strong><span>${esc(x.summary)}</span></div><span class="status">${new Date(x.timestamp).toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit"})}</span><button class="delete-btn" data-delete="${esc(x.id)}" data-store="healthEvents" aria-label="删除">×</button></div>`}
 
 function recordPage(){return `<div class="section-title"><h3>记录什么？</h3><span class="muted">全部手动记录</span></div><div class="quick-grid">
  <button class="quick" data-quick="weight"><b>⚖️</b><span>体重</span></button>
@@ -129,11 +136,11 @@ function recordPage(){return `<div class="section-title"><h3>记录什么？</h3
  <button class="quick" data-quick="diet"><b>🍽️</b><span>饮食</span></button>
  </div>`}
 
-function openRecord(type){
+async function openRecord(type){
  let body=`<form id="recordForm" class="form"><div class="form-row">${field("日期","date","date",localDate(),true)}${field("时间","time","time",localTime(),true)}</div>`;
- if(type==="weight")body+=field("体重 (kg)","value","number","68.4",true)+field("体脂率 (%)","bodyFat","number","");
+ if(type==="weight")body+=`<div class="field"><label>体重 (kg)</label><input name="value" type="number" step="0.1" inputmode="decimal" min="0" placeholder="68.4" required></div><div class="field"><label>体脂率 (%)</label><input name="bodyFat" type="number" step="0.1" inputmode="decimal" min="0" placeholder="可选"></div>`;
  if(type==="exercise")body+=`<div class="field"><label>运动类型</label><select name="activity"><option>步行</option><option>跑步</option><option>骑行</option><option>游泳</option><option>健身</option><option>球类</option><option>其他</option></select></div>${field("持续时间 (分钟)","duration","number","30",true)}${field("距离 (km)","distance","number","")}`;
- if(type==="diet")body+=`<div class="field"><label>餐次</label><select name="meal"><option>早餐</option><option>午餐</option><option>晚餐</option><option>加餐</option><option>其他</option></select></div>${field("吃了什么","food","text","例如 鸡蛋、牛奶、米饭",true)}${field("热量 (kcal，可选)","calories","number","")}`;
+ if(type==="diet"){const memory=(await getSettings()).foodCalories||{};const opts=Object.entries(memory).map(([food,cal])=>`<option value="${esc(food)}">${esc(food)} · ${esc(cal)} kcal</option>`).join("");body+=`<div class="field"><label>餐次</label><select name="meal"><option>早餐</option><option>午餐</option><option>晚餐</option><option>加餐</option><option>其他</option></select></div><div class="field"><label>吃了什么</label><input id="foodInput" name="food" type="text" list="foodHistory" placeholder="例如 鸡蛋、牛奶、米饭" required><datalist id="foodHistory">${opts}</datalist></div><div class="field"><label>热量 (kcal，可选)</label><input id="calorieInput" name="calories" type="number" step="1" min="0" inputmode="numeric" placeholder="已记录食物会自动带出"></div>`;}
  body+=field("备注","note","textarea","")+`<div class="actions"><button class="btn">保存</button><button type="button" class="btn secondary" data-close>取消</button></div></form>`;
  showModal(type==="weight"?"记录体重":type==="exercise"?"记录运动":"记录饮食",body);
  const recordForm=document.getElementById("recordForm");
@@ -143,10 +150,11 @@ function openRecord(type){
  const timeInput=recordForm.elements.time;
  if(dateInput) dateInput.value=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
  if(timeInput) timeInput.value=`${pad(now.getHours())}:${pad(now.getMinutes())}`;
+ if(type==="diet"){const foodInput=recordForm.elements.food,calorieInput=recordForm.elements.calories,memory=(await getSettings()).foodCalories||{};const fill=()=>{const key=foodInput.value.trim();if(key&&memory[key]!=null&&!calorieInput.value)calorieInput.value=memory[key]};foodInput.addEventListener("change",fill);foodInput.addEventListener("blur",fill)}
  recordForm.onsubmit=async e=>{e.preventDefault();let f=new FormData(e.target),x={id:uid(),type,timestamp:localISO(f.get("date"),f.get("time")),createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
  if(type==="weight"){x.value=+f.get("value");x.bodyFat=f.get("bodyFat")?+f.get("bodyFat"):null;x.title="体重";x.summary=`${x.value} kg`}
  else if(type==="exercise"){x.activity=f.get("activity");x.duration=+f.get("duration");x.distance=f.get("distance")?+f.get("distance"):null;x.title=x.activity;x.summary=`${x.duration} min${x.distance?` · ${x.distance} km`:""}`}
- else {x.meal=f.get("meal");x.food=f.get("food");x.calories=f.get("calories")?+f.get("calories"):null;x.title=x.meal;x.summary=x.food+(x.calories?` · ${x.calories} kcal`:"")}
+ else {x.meal=f.get("meal");x.food=f.get("food");x.calories=f.get("calories")?+f.get("calories"):null;x.title=x.meal;x.summary=x.food+(x.calories?` · ${x.calories} kcal`:"");if(x.food&&x.calories!=null){const memory=(await getSettings()).foodCalories||{};memory[x.food.trim()]=x.calories;await saveSettings({foodCalories:memory})}}
  x.note=f.get("note")||"";await put("healthEvents",x);closeModal();render()}
 }
 function field(l,n,t="text",p="",req=false){if(t==="textarea")return `<div class="field"><label>${l}</label><textarea name="${n}" placeholder="${p}"></textarea></div>`;const isDateTime=t==="date"||t==="time";return `<div class="field"><label>${l}</label><input name="${n}" type="${t}" ${isDateTime?`value="${esc(p)}"`: `placeholder="${esc(p)}"`} ${req?"required":""}></div>`}
@@ -161,41 +169,18 @@ async function trendsPage(){
 async function timeline(){
  const es=(await all("healthEvents")).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));if(!es.length)return `<div class="empty">还没有记录。</div>`;
  const g={};es.forEach(x=>(g[x.timestamp.slice(0,10)]??=[]).push(x));
- return Object.entries(g).map(([d,a])=>`<div class="timeline-date">${d}</div>${a.map(x=>`<div class="timeline-item"><div class="timeline-card"><span class="time">${new Date(x.timestamp).toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit"})}</span><strong>${x.type==="weight"?"⚖️":x.type==="exercise"?"🏃":"🍽️"} ${esc(x.title)}</strong><small>${esc(x.summary)}</small></div></div>`).join("")}`).join("");
+ return Object.entries(g).map(([d,a])=>`<div class="timeline-date">${d}</div>${a.map(x=>`<div class="timeline-item"><div class="timeline-card"><span class="time">${new Date(x.timestamp).toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit"})}</span><strong>${x.type==="weight"?"⚖️":x.type==="exercise"?"🏃":"🍽️"} ${esc(x.title)}</strong><small>${esc(x.summary)}</small><button class="delete-btn timeline-delete" data-delete="${esc(x.id)}" data-store="healthEvents" aria-label="删除">删除</button></div></div>`).join("")}`).join("");
 }
 async function me(){
- return `<div class="hero"><div class="date">个人数据</div><h2>我的</h2><div class="muted">管理本地健康数据。所有数据保存在本机。</div></div>
+ const settings=await getSettings(),h=settings.heightCm||"";
+ return `<div class="hero"><div class="date">APP SETTINGS</div><h2>设置</h2><div class="muted">管理个人信息、健康计算和本地数据。</div></div>
+ <div class="section-title"><h3>个人信息</h3></div>
+ <div class="card settings-card"><label class="setting-label">身高 (cm)</label><div class="height-row"><input id="heightInput" type="number" step="0.1" inputmode="decimal" min="50" max="250" value="${esc(h)}" placeholder="例如 175"><button class="btn" id="saveHeight">保存</button></div><small class="muted">输入一次后，首页会根据最近一次体重自动计算 BMI。</small></div>
  <div class="section-title"><h3>数据管理</h3></div><div class="settings">
  <button class="setting" id="export"><b>📦 导出数据</b><span>JSON ›</span></button>
  <button class="setting" id="import"><b>📥 导入数据</b><span>JSON ›</span></button><input id="fileInput" type="file" accept=".json" hidden>
- </div>`}
-function showModal(t,b){document.getElementById("modalTitle").textContent=t;document.getElementById("modalBody").innerHTML=b;document.getElementById("modal").classList.remove("hidden")}
-function closeModal(){document.getElementById("modal").classList.add("hidden")}
-(async()=>{await openDB();render()})();
-</script>
-<script>
-if("serviceWorker"in navigator){
- window.addEventListener("load",async()=>{
-   try{
-     const reg=await navigator.serviceWorker.register("sw.js",{updateViaCache:"none"});
-     reg.update();
-     if(reg.waiting) reg.waiting.postMessage("SKIP_WAITING");
-     reg.addEventListener("updatefound",()=>{
-       const nw=reg.installing;
-       if(!nw)return;
-       nw.addEventListener("statechange",()=>{
-         if(nw.state==="installed" && navigator.serviceWorker.controller){
-           nw.postMessage("SKIP_WAITING");
-         }
-       });
-     });
-     let reloaded=false;
-     navigator.serviceWorker.addEventListener("controllerchange",()=>{
-       if(!reloaded){reloaded=true;location.reload();}
-     });
-   }catch(e){console.error("Service Worker:",e);}
- });
-}
+ </div>
+ <div class="section-title"><h3>关于</h3></div><div class="card version-card"><span>我的健康</span><strong>版本 2.9</strong></div>`}
 </script>
 </body>
 </html>
