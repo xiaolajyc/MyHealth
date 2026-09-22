@@ -12,7 +12,7 @@ document.addEventListener("click",async e=>{
  if(e.target.closest("#topAdd")){page="record";render();return}
  if(e.target.closest("[data-close]")){closeModal();return}
  const q=e.target.closest("[data-quick]");if(q)openRecord(q.dataset.quick);
- if(e.target.closest("#bulkTake"))openBulkTake();
+
  const m=e.target.closest("[data-med]");if(m)openProduct(m.dataset.kind,m.dataset.med);
  const add=e.target.closest("[data-add]");if(add)openProduct(add.dataset.add,null);
  const take=e.target.closest("[data-take]");if(take){const store=take.dataset.kind==="medication"?"medicationLogs":"supplementLogs";const logs=await all(store);const exists=logs.some(x=>x.productId===take.dataset.take&&x.timestamp.slice(0,10)===today());if(!exists){await put(store,{id:uid(),productId:take.dataset.take,timestamp:new Date().toISOString()});take.textContent="已服 ✓";take.classList.add("taken");setTimeout(render,300)}else{take.textContent="今天已记录";take.classList.add("taken")}}
@@ -43,61 +43,36 @@ async function home(){
  ${metric("⚖️","体重",w?`${w.value} kg`:"—",w?fmt(w.timestamp):"暂无记录")}
  ${metric("🏃","运动",ex?`${ex.duration} min`:"—",ex?ex.activity:"暂无记录")}
  </div>
- <div class="section-title"><h3>今日服用</h3><button class="link" data-page="me">管理</button></div>
- ${meds.length||sups.length?`${meds.map(x=>productRow(x,"medication")).join("")}${sups.map(x=>productRow(x,"supplement")).join("")}<button class="btn bulk-btn" id="bulkTake">✓ 选择多种并一次服用</button>`:`<div class="empty">还没有正在使用的药物或补充剂</div>`}
+ <div class="section-title"><h3>今日饮食</h3></div>
+ ${events.filter(x=>x.type==="diet" && x.timestamp.slice(0,10)===today()).map(eventRow).join("")||`<div class="empty">今天还没有饮食记录</div>`}
  <div class="section-title"><h3>最近记录</h3><button class="link" data-page="timeline">全部</button></div>
+ 
  ${events.slice(0,4).map(eventRow).join("")||`<div class="empty">还没有记录。点击 ＋ 开始。</div>`}`;
 }
 function metric(i,l,v,s){return `<div class="card metric"><span class="label">${i} ${l}</span><div class="value">${v}</div><div class="sub">${s}</div></div>`}
 function productRow(x,k){return `<div class="row-card"><div class="row-icon">${k==="medication"?"💊":"🧴"}</div><div class="row-main"><strong>${esc(x.name)}</strong><span>${esc(x.dose)} · ${esc(x.frequency)}${x.times?.length?" · "+esc(x.times.join(" / ")):""}</span></div><button class="take-btn" data-take="${x.id}" data-kind="${k}">今日已服</button></div>`}
-function eventRow(x){return `<div class="row-card"><div class="row-icon">${x.type==="weight"?"⚖️":"🏃"}</div><div class="row-main"><strong>${esc(x.title)}</strong><span>${esc(x.summary)}</span></div><span class="status">${new Date(x.timestamp).toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit"})}</span></div>`}
+function eventRow(x){return `<div class="row-card"><div class="row-icon">${x.type==="weight"?"⚖️":x.type==="exercise"?"🏃":"🍽️"}</div><div class="row-main"><strong>${esc(x.title)}</strong><span>${esc(x.summary)}</span></div><span class="status">${new Date(x.timestamp).toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit"})}</span></div>`}
 
 function recordPage(){return `<div class="section-title"><h3>记录什么？</h3><span class="muted">全部手动记录</span></div><div class="quick-grid">
  <button class="quick" data-quick="weight"><b>⚖️</b><span>体重</span></button>
  <button class="quick" data-quick="exercise"><b>🏃</b><span>运动</span></button>
- <button class="quick" data-quick="medication"><b>💊</b><span>服药</span></button>
- <button class="quick" data-quick="supplement"><b>🧴</b><span>补充剂</span></button>
+ <button class="quick" data-quick="diet"><b>🍽️</b><span>饮食</span></button>
  </div>`}
 
-async function openBulkTake(){
- const meds=(await all("medications")).filter(x=>x.active!==false),sups=(await all("supplements")).filter(x=>x.active!==false);
- const products=[...meds.map(x=>({...x,kind:"medication"})),...sups.map(x=>({...x,kind:"supplement"}))];
- if(!products.length){showModal("一次服用多种",'<div class="empty">还没有正在使用的药物或补充剂。</div>');return}
- showModal("一次服用多种",`<div class="bulk-list">${products.map(x=>`<label class="bulk-item"><input type="checkbox" value="${x.id}" data-kind="${x.kind}"><span class="row-icon">${x.kind==="medication"?"💊":"🧴"}</span><span><strong>${esc(x.name)}</strong><small>${esc(x.dose)} · ${esc(x.amount||"")}</small></span></label>`).join("")}</div><div class="actions"><button class="btn" id="confirmBulk">确认服用</button><button class="btn secondary" data-close>取消</button></div>`);
- document.getElementById("confirmBulk").onclick=async()=>{
-   const checks=[...document.querySelectorAll(".bulk-item input:checked")];
-   if(!checks.length){document.getElementById("confirmBulk").textContent="请先选择";setTimeout(()=>document.getElementById("confirmBulk").textContent="确认服用",900);return}
-   const now=new Date().toISOString();
-   for(const c of checks){const store=c.dataset.kind==="medication"?"medicationLogs":"supplementLogs",logs=await all(store);if(!logs.some(x=>x.productId===c.value&&x.timestamp.slice(0,10)===today()))await put(store,{id:uid(),productId:c.value,timestamp:now})}
-   closeModal();render();
- };
-}
-
 function openRecord(type){
- if(type==="medication"||type==="supplement"){openProduct(type);return}
  let body=`<form id="recordForm" class="form"><div class="form-row">${field("日期","date","date",localDate(),true)}${field("时间","time","time",localTime(),true)}</div>`;
  if(type==="weight")body+=field("体重 (kg)","value","number","68.4",true)+field("体脂率 (%)","bodyFat","number","");
  if(type==="exercise")body+=`<div class="field"><label>运动类型</label><select name="activity"><option>步行</option><option>跑步</option><option>骑行</option><option>游泳</option><option>健身</option><option>球类</option><option>其他</option></select></div>${field("持续时间 (分钟)","duration","number","30",true)}${field("距离 (km)","distance","number","")}`;
+ if(type==="diet")body+=`<div class="field"><label>餐次</label><select name="meal"><option>早餐</option><option>午餐</option><option>晚餐</option><option>加餐</option><option>其他</option></select></div>${field("吃了什么","food","text","例如 鸡蛋、牛奶、米饭",true)}${field("热量 (kcal，可选)","calories","number","")}`;
  body+=field("备注","note","textarea","")+`<div class="actions"><button class="btn">保存</button><button type="button" class="btn secondary" data-close>取消</button></div></form>`;
- showModal(type==="weight"?"记录体重":"记录运动",body);
+ showModal(type==="weight"?"记录体重":type==="exercise"?"记录运动":"记录饮食",body);
  document.getElementById("recordForm").onsubmit=async e=>{e.preventDefault();let f=new FormData(e.target),x={id:uid(),type,timestamp:localISO(f.get("date"),f.get("time")),createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
  if(type==="weight"){x.value=+f.get("value");x.bodyFat=f.get("bodyFat")?+f.get("bodyFat"):null;x.title="体重";x.summary=`${x.value} kg`}
- else{x.activity=f.get("activity");x.duration=+f.get("duration");x.distance=f.get("distance")?+f.get("distance"):null;x.title=x.activity;x.summary=`${x.duration} min${x.distance?` · ${x.distance} km`:""}`}
+ else if(type==="exercise"){x.activity=f.get("activity");x.duration=+f.get("duration");x.distance=f.get("distance")?+f.get("distance"):null;x.title=x.activity;x.summary=`${x.duration} min${x.distance?` · ${x.distance} km`:""}`}
+ else {x.meal=f.get("meal");x.food=f.get("food");x.calories=f.get("calories")?+f.get("calories"):null;x.title=x.meal;x.summary=x.food+(x.calories?` · ${x.calories} kcal`:"")}
  x.note=f.get("note")||"";await put("healthEvents",x);closeModal();render()}
 }
 function field(l,n,t="text",p="",req=false){if(t==="textarea")return `<div class="field"><label>${l}</label><textarea name="${n}" placeholder="${p}"></textarea></div>`;return `<div class="field"><label>${l}</label><input name="${n}" type="${t}" placeholder="${p}" ${req?"required":""}></div>`}
-
-function openProduct(kind,id=null){
- const med=kind==="medication",title=med?(id?"编辑药物":"添加药物"):(id?"编辑补充剂":"添加补充剂");
- showModal(title,`<form id="productForm" class="form">
- ${field("名称","name","text",med?"药物名称":"例如 Vitamin D",true)}
- <div class="form-row">${field("剂量","dose","text","例如 10 mg",true)}${field("每次用量","amount","text","例如 1 tablet")}</div>
- <div class="field"><label>频率</label><select name="frequency"><option>每日一次</option><option>每日两次</option><option>每日三次</option><option>每周一次</option><option>隔日一次</option><option>按需</option><option>自定义</option></select></div>
- <div class="form-row">${field("开始日期","startDate","date",localDate(),true)}${field("结束日期","endDate","date","")}</div>
- ${field("服用时间","times","text","例如 08:00 或 08:00,20:00")}${field("备注","note","textarea","")}
- <div class="actions"><button class="btn">保存</button><button type="button" class="btn secondary" data-close>取消</button></div></form>`);
- document.getElementById("productForm").onsubmit=async e=>{e.preventDefault();let f=new FormData(e.target),now=new Date().toISOString();await put(med?"medications":"supplements",{id:id||uid(),name:f.get("name"),dose:f.get("dose"),amount:f.get("amount"),frequency:f.get("frequency"),startDate:f.get("startDate"),endDate:f.get("endDate"),times:(f.get("times")||"").split(",").map(x=>x.trim()).filter(Boolean),note:f.get("note"),active:true,createdAt:now,updatedAt:now});closeModal();render()}
-}
 
 async function trendsPage(){
  const events=await all("healthEvents"),items=events.filter(x=>x.type===trend).sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp)).slice(-20);
@@ -109,7 +84,7 @@ async function trendsPage(){
 async function timeline(){
  const es=(await all("healthEvents")).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));if(!es.length)return `<div class="empty">还没有记录。</div>`;
  const g={};es.forEach(x=>(g[x.timestamp.slice(0,10)]??=[]).push(x));
- return Object.entries(g).map(([d,a])=>`<div class="timeline-date">${d}</div>${a.map(x=>`<div class="timeline-item"><div class="timeline-card"><span class="time">${new Date(x.timestamp).toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit"})}</span><strong>${x.type==="weight"?"⚖️":"🏃"} ${esc(x.title)}</strong><small>${esc(x.summary)}</small></div></div>`).join("")}`).join("");
+ return Object.entries(g).map(([d,a])=>`<div class="timeline-date">${d}</div>${a.map(x=>`<div class="timeline-item"><div class="timeline-card"><span class="time">${new Date(x.timestamp).toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit"})}</span><strong>${x.type==="weight"?"⚖️":x.type==="exercise"?"🏃":"🍽️"} ${esc(x.title)}</strong><small>${esc(x.summary)}</small></div></div>`).join("")}`).join("");
 }
 async function me(){
  const meds=await all("medications"),sups=await all("supplements");

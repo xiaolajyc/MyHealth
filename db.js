@@ -1,4 +1,4 @@
-const DB="myHealthSimple",VER=1,STORES=["healthEvents","medications","medicationLogs","supplements","supplementLogs","settings"];
+const DB="myHealthSimple",VER=1,STORES=["healthEvents","settings"];
 let dbp;
 function openDB(){if(dbp)return dbp;dbp=new Promise((resolve,reject)=>{const r=indexedDB.open(DB,VER);r.onupgradeneeded=e=>{const d=e.target.result;STORES.forEach(s=>{if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:"id"})})};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});return dbp}
 const uid=()=>crypto.randomUUID?crypto.randomUUID():Date.now()+"-"+Math.random();
