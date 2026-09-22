@@ -17,7 +17,7 @@
 
 .delete-btn{border:0;background:transparent;color:#a8b7b4;font-size:18px;line-height:1;cursor:pointer;padding:5px 7px;flex:none}.delete-btn:hover{color:#c04d4d}.timeline-card{position:relative;padding-right:48px}.timeline-delete{position:absolute;right:8px;bottom:8px;font-size:11px}.settings-card{padding:16px}.setting-label{display:block;font-size:13px;font-weight:750;margin-bottom:8px}.height-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}.height-row input{flex:1;min-width:0;border:1px solid #dce9e6;border-radius:14px;padding:12px;background:#fff;font:inherit}.version-card{padding:16px;display:flex;justify-content:space-between;align-items:center}.version-card strong{color:#168276;font-size:13px}</style>
 <title>我的健康</title>
-<meta name="app-version" content="2.9">
+<meta name="app-version" content="2.11">
 </head>
 <body>
 <div id="app">
@@ -83,7 +83,7 @@ document.addEventListener("click",async e=>{
  const p=e.target.closest("[data-page]");if(p){page=p.dataset.page;render();return}
  if(e.target.closest("#topAdd")){page="record";render();return}
  if(e.target.closest("[data-close]")){closeModal();return}
- const q=e.target.closest("[data-quick]");if(q)openRecord(q.dataset.quick);
+ const q=e.target.closest("[data-quick]");if(q){await openRecord(q.dataset.quick);return;}
 
  const remove=e.target.closest("[data-delete]");if(remove){e.preventDefault();e.stopPropagation();if(confirm("确定删除这条记录吗？")){await del(remove.dataset.store,remove.dataset.delete);render()}return}
  if(e.target.closest("#saveHeight")){const v=Number(document.getElementById("heightInput").value);if(v>=50&&v<=250){await saveSettings({heightCm:v});render()}return}
@@ -115,12 +115,12 @@ async function home(){
  const diet=events.filter(x=>x.type==="diet" && x.timestamp.slice(0,10)===today());
  const settings=await getSettings(),height=settings.heightCm>0?Number(settings.heightCm):null;
  const bmi=w&&height?Number(w.value)/(height/100)**2:null;
- const bmiInfo=bmi==null?null:(bmi<18.5?["偏低","BMI < 18.5"]:bmi<25?["正常","BMI 18.5–24.9"]:bmi<30?["偏高","BMI 25–29.9"]:["肥胖范围","BMI ≥ 30"]);
+ const bmiInfo=bmi==null?null:(bmi<18.5?["偏低","< 18.5"]:bmi<25?["正常","18.5–24.9"]:bmi<30?["偏高","25.0–29.9"]:["肥胖","≥ 30.0"]);
  return `<section class="hero"><div class="date">${new Intl.DateTimeFormat("zh-CN",{year:"numeric",month:"long",day:"numeric",weekday:"long"}).format(new Date())}</div><h2>今天，照顾好自己。</h2><div class="muted">只记录真正有用的健康信息。</div></section>
  <div class="section-title"><h3>今日概览</h3></div><div class="grid">
  ${metric("⚖️","体重",w?`${w.value} kg`:"—",w?fmt(w.timestamp):"暂无记录")}
  ${metric("🏃","运动",ex?`${ex.duration} min`:"—",ex?ex.activity:"暂无记录")}
- ${metric("📏","BMI",bmi?bmi.toFixed(1):"—",bmiInfo?bmiInfo[0]:(height?"暂无体重":"请在设置中输入身高"))}
+ ${metric("📏","BMI",bmi?bmi.toFixed(1):"—",bmiInfo?`${bmiInfo[0]} · ${bmiInfo[1]}`:(height?"暂无体重":"请在设置中输入身高"))}
  </div>
  <div class="section-title"><h3>今日饮食</h3><button class="link" data-page="record">添加</button></div>
  ${diet.map(eventRow).join("")||`<div class="empty">今天还没有饮食记录</div>`}
@@ -180,7 +180,31 @@ async function me(){
  <button class="setting" id="export"><b>📦 导出数据</b><span>JSON ›</span></button>
  <button class="setting" id="import"><b>📥 导入数据</b><span>JSON ›</span></button><input id="fileInput" type="file" accept=".json" hidden>
  </div>
- <div class="section-title"><h3>关于</h3></div><div class="card version-card"><span>我的健康</span><strong>版本 2.9</strong></div>`}
+ <div class="section-title"><h3>关于</h3></div><div class="card version-card"><span>我的健康</span><strong>版本 2.11</strong></div>`}
+function showModal(t,b){document.getElementById("modalTitle").textContent=t;document.getElementById("modalBody").innerHTML=b;document.getElementById("modal").classList.remove("hidden")}
+function closeModal(){document.getElementById("modal").classList.add("hidden")}
+(async()=>{try{await openDB();await render()}catch(e){console.error(e);document.getElementById("main").innerHTML=`<div class="empty"><strong>页面加载失败</strong><br><span class="muted">${esc(e.message||"未知错误")}</span><br><button class="btn" style="margin-top:12px" onclick="location.reload()">重新加载</button></div>`}})();
+</script>
+<script>
+if("serviceWorker"in navigator){
+ window.addEventListener("load",async()=>{
+  try{
+   const reg=await navigator.serviceWorker.register("sw.js",{updateViaCache:"none"});
+   reg.update();
+   if(reg.waiting)reg.waiting.postMessage("SKIP_WAITING");
+   reg.addEventListener("updatefound",()=>{
+    const nw=reg.installing;if(!nw)return;
+    nw.addEventListener("statechange",()=>{
+     if(nw.state==="installed"&&navigator.serviceWorker.controller)nw.postMessage("SKIP_WAITING");
+    });
+   });
+   let reloaded=false;
+   navigator.serviceWorker.addEventListener("controllerchange",()=>{
+    if(!reloaded){reloaded=true;location.reload();}
+   });
+  }catch(e){console.error("Service Worker:",e)}
+ });
+}
 </script>
 </body>
 </html>
