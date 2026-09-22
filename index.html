@@ -9,8 +9,15 @@
 <meta name="apple-mobile-web-app-title" content="我的健康">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="manifest" href="manifest.json">
-<link rel="stylesheet" href="style.css">
+<style>
+*{box-sizing:border-box}html,body{margin:0;background:#f6fbfa;color:#17312f;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}body{min-height:100vh}.topbar{height:88px;padding:22px 18px 10px;display:flex;align-items:flex-end;justify-content:space-between;position:sticky;top:0;z-index:10;background:rgba(246,251,250,.95);backdrop-filter:blur(18px)}.eyebrow{font-size:10px;letter-spacing:1.7px;color:#7d9995;font-weight:700}.topbar h1{font-size:27px;margin:5px 0 0}.icon-btn{border:0;background:#fff;width:42px;height:42px;border-radius:14px;box-shadow:0 5px 18px #17433b12;color:#177b70;font-size:25px;cursor:pointer}main{padding:8px 16px 98px;max-width:760px;margin:auto}.hero{background:linear-gradient(135deg,#dff5ef,#edf9f6);border-radius:25px;padding:20px;margin:8px 0 18px}.hero .date{font-size:13px;color:#66827e}.hero h2{font-size:26px;margin:7px 0 4px}.muted{color:#78918d;font-size:13px;line-height:1.5}.section-title{display:flex;justify-content:space-between;align-items:center;margin:22px 2px 10px}.section-title h3{margin:0;font-size:16px}.link{border:0;background:none;color:#17877b;font-weight:700}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}.card{background:#fff;border-radius:19px;padding:15px;box-shadow:0 5px 20px #17433b0b;border:1px solid #e8f0ee}.metric{min-height:116px}.metric .label{font-size:12px;color:#78908c}.metric .value{font-size:24px;font-weight:750;margin:12px 0 4px}.metric .sub{font-size:11px;color:#91a6a2}.row-card{background:#fff;border-radius:18px;padding:14px 15px;display:flex;align-items:center;gap:12px;margin-bottom:9px;box-shadow:0 4px 18px #17433b0a}.row-icon{width:40px;height:40px;border-radius:13px;background:#edf8f5;display:grid;place-items:center;font-size:19px}.row-main{flex:1}.row-main strong{display:block;font-size:14px}.row-main span{display:block;font-size:12px;color:#7c9691;margin-top:4px}.status{font-size:12px;font-weight:700;color:#819994}.status.done{color:#168276}.quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.quick{border:0;background:#fff;border-radius:18px;padding:19px 10px;box-shadow:0 4px 18px #17433b0a;color:#24413e}.quick b{display:block;font-size:25px;margin-bottom:8px;color:#16877a}.quick span{font-size:12px}.bottom-nav{position:fixed;left:0;right:0;bottom:0;height:76px;padding:8px 8px calc(8px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(5,1fr);background:rgba(255,255,255,.97);backdrop-filter:blur(20px);border-top:1px solid #e5eeec;z-index:20}.nav-btn{border:0;background:none;color:#8aa09d;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border-radius:15px}.nav-btn span{font-size:21px}.nav-btn small{font-size:10px}.nav-btn.active{color:#138276;background:#edf8f5}.empty{text-align:center;padding:30px 12px;color:#8aa19d;background:#fff;border-radius:18px}.form{display:grid;gap:13px}.field label{display:block;font-size:12px;color:#6f8985;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;border:1px solid #dce9e6;border-radius:13px;padding:12px;background:#fff;font:inherit;color:#18332f}.field textarea{min-height:80px;resize:vertical}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.actions{display:flex;gap:8px;margin-top:5px}.btn{flex:1;border:0;border-radius:14px;padding:12px;background:#16877a;color:#fff;font-weight:750}.btn.secondary{background:#edf7f4;color:#167b70}.btn.danger{background:#fff0f0;color:#c84d4d}.sheet{position:relative;background:#f8fcfb;border-radius:27px 27px 0 0;padding:18px 17px max(22px,env(safe-area-inset-bottom));max-height:92vh;overflow:auto;z-index:31}.modal{position:fixed;inset:0;z-index:30;display:flex;align-items:flex-end}.modal.hidden{display:none}.backdrop{position:absolute;inset:0;background:#0d29254f}.sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}.sheet-head h2{font-size:21px;margin:0}.tabs{display:flex;gap:7px;overflow:auto;margin:10px 0 16px}.tab{border:0;background:#fff;border-radius:13px;padding:9px 13px;color:#78908c;white-space:nowrap}.tab.active{background:#16877a;color:#fff}.chart{height:200px;background:#fff;border-radius:20px;padding:12px;box-shadow:0 5px 20px #17433b0a}.settings{display:grid;gap:9px}.setting{border:0;background:#fff;border-radius:18px;padding:16px;text-align:left;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 18px #17433b0a;color:#24413e;font:inherit}.setting span{color:#91a6a2}.med-card{background:#fff;border-radius:19px;padding:15px;margin-bottom:10px;box-shadow:0 4px 18px #17433b0a}.med-top{display:flex;justify-content:space-between;gap:10px}.med-top h3{margin:0;font-size:16px}.med-top p{margin:5px 0 0;color:#7b9490;font-size:12px}.pill{display:inline-flex;padding:5px 9px;border-radius:999px;background:#edf8f5;color:#168276;font-size:11px;font-weight:700}.mini-actions{display:flex;gap:7px;margin-top:12px}.mini-actions button{flex:1;border:0;border-radius:11px;padding:9px;background:#edf8f5;color:#177b70;font-weight:700}.search{width:100%;border:1px solid #dce9e6;border-radius:14px;padding:12px;background:#fff;font:inherit;margin-bottom:12px}.timeline-date{font-size:13px;color:#6f8985;margin:18px 3px 9px;font-weight:750}.timeline-item{position:relative;padding-left:25px;margin-bottom:11px}.timeline-item:before{content:"";position:absolute;left:5px;top:7px;width:9px;height:9px;border-radius:50%;background:#16877a;box-shadow:0 0 0 4px #e3f4f0}.timeline-card{background:#fff;border-radius:16px;padding:12px 14px;box-shadow:0 4px 15px #17433b09}.timeline-card .time{font-size:10px;color:#8aa09d}.timeline-card strong{display:block;margin-top:4px;font-size:14px}.timeline-card small{display:block;margin-top:3px;color:#79908c}@media(min-width:650px){.grid{grid-template-columns:repeat(3,1fr)}.quick-grid{grid-template-columns:repeat(4,1fr)}}
+.take-btn{border:0;background:#edf8f5;color:#168276;border-radius:11px;padding:9px 10px;font-size:11px;font-weight:750;white-space:nowrap;cursor:pointer}.take-btn.taken{background:#16877a;color:#fff}
+
+
+
+</style>
 <title>我的健康</title>
+<meta name="app-version" content="2.6">
 </head>
 <body>
 <div id="app">
@@ -31,7 +38,141 @@
  <div class="backdrop" data-close></div>
  <section class="sheet"><div class="sheet-head"><h2 id="modalTitle"></h2><button class="icon-btn" data-close>×</button></div><div id="modalBody"></div></section>
 </div>
-<script src="db.js"></script><script src="app.js"></script>
+<script>
+const DB="myHealthSimple",VER=3,STORES=["healthEvents","settings"];
+let dbp;
+function openDB(){
+  if(dbp)return dbp;
+  dbp=new Promise((resolve,reject)=>{
+    const r=indexedDB.open(DB,VER);
+    r.onupgradeneeded=e=>{
+      const d=e.target.result;
+      // Keep only the stores used by the current simple health app.
+      ["medications","medicationLogs","supplements","supplementLogs"].forEach(s=>{
+        if(d.objectStoreNames.contains(s)) d.deleteObjectStore(s);
+      });
+      STORES.forEach(s=>{if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:"id"})});
+    };
+    r.onsuccess=()=>resolve(r.result);
+    r.onerror=()=>reject(r.error);
+    r.onblocked=()=>console.warn("IndexedDB upgrade is blocked by another tab");
+  });
+  return dbp;
+}
+const uid=()=>crypto.randomUUID?crypto.randomUUID():Date.now()+"-"+Math.random();
+async function put(s,v){const d=await openDB();return new Promise((ok,no)=>{const t=d.transaction(s,"readwrite");t.objectStore(s).put(v);t.oncomplete=ok;t.onerror=()=>no(t.error)})}
+async function all(s){const d=await openDB();if(!d.objectStoreNames.contains(s))return [];return new Promise((ok,no)=>{const r=d.transaction(s).objectStore(s).getAll();r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
+async function del(s,id){const d=await openDB();return new Promise((ok,no)=>{const t=d.transaction(s,"readwrite");t.objectStore(s).delete(id);t.oncomplete=ok;t.onerror=()=>no(t.error)})}
+function today(){const d=new Date(),p=n=>String(n).padStart(2,"0");return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`}
+async function exportData(){const o={version:3,exportedAt:new Date().toISOString()};for(const s of STORES)o[s]=await all(s);const b=new Blob([JSON.stringify(o,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=`my-health-${today()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+async function importData(file){const x=JSON.parse(await file.text());for(const s of STORES)for(const v of x[s]||[])await put(s,v)}
+
+</script>
+<script>
+let page="home",trend="weight";
+const titles={home:"首页",record:"记录",trends:"趋势",timeline:"时间轴",me:"我的"};
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+const fmt=d=>new Intl.DateTimeFormat("zh-CN",{month:"short",day:"numeric",weekday:"short"}).format(new Date(d));
+function localDate(){const d=new Date(),p=n=>String(n).padStart(2,"0");return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`}
+function localTime(){const d=new Date(),p=n=>String(n).padStart(2,"0");return `${p(d.getHours())}:${p(d.getMinutes())}`}
+function localISO(date,time){return `${date}T${time}:00`}
+
+document.addEventListener("click",async e=>{
+ const p=e.target.closest("[data-page]");if(p){page=p.dataset.page;render();return}
+ if(e.target.closest("#topAdd")){page="record";render();return}
+ if(e.target.closest("[data-close]")){closeModal();return}
+ const q=e.target.closest("[data-quick]");if(q)openRecord(q.dataset.quick);
+
+ const remove=e.target.closest("[data-delete]");if(remove){await del(remove.dataset.store,remove.dataset.delete);closeModal();render()}
+ if(e.target.closest("#export"))await exportData();
+ if(e.target.closest("#import"))document.getElementById("fileInput").click();
+ const tr=e.target.closest("[data-trend]");if(tr){trend=tr.dataset.trend;render()}
+});
+document.addEventListener("change",async e=>{if(e.target.id==="fileInput"){await importData(e.target.files[0]);render()}});
+
+async function render(){
+ document.getElementById("pageTitle").textContent=titles[page];
+ document.querySelectorAll(".nav-btn").forEach(x=>x.classList.toggle("active",x.dataset.page===page));
+ const m=document.getElementById("main");
+ try {
+ if(page==="home")m.innerHTML=await home();
+ else if(page==="record")m.innerHTML=recordPage();
+ else if(page==="trends")m.innerHTML=await trendsPage();
+ else if(page==="timeline")m.innerHTML=await timeline();
+ else if(page==="me")m.innerHTML=await me();
+} catch(err) {
+ console.error(err);
+ m.innerHTML=`<div class="empty"><strong>页面加载失败</strong><br><span class="muted">${esc(err.message||"未知错误")}</span><br><button class="btn" style="margin-top:12px" onclick="location.reload()">重新加载</button></div>`;
+}
+}
+async function home(){
+ const events=(await all("healthEvents")).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+ const w=events.filter(x=>x.type==="weight").sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp))[0];
+ const ex=events.filter(x=>x.type==="exercise").sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp))[0];
+ const diet=events.filter(x=>x.type==="diet" && x.timestamp.slice(0,10)===today());
+ return `<section class="hero"><div class="date">${new Intl.DateTimeFormat("zh-CN",{year:"numeric",month:"long",day:"numeric",weekday:"long"}).format(new Date())}</div><h2>今天，照顾好自己。</h2><div class="muted">只记录真正有用的健康信息。</div></section>
+ <div class="section-title"><h3>今日概览</h3></div><div class="grid">
+ ${metric("⚖️","体重",w?`${w.value} kg`:"—",w?fmt(w.timestamp):"暂无记录")}
+ ${metric("🏃","运动",ex?`${ex.duration} min`:"—",ex?ex.activity:"暂无记录")}
+ </div>
+ <div class="section-title"><h3>今日饮食</h3><button class="link" data-page="record">添加</button></div>
+ ${diet.map(eventRow).join("")||`<div class="empty">今天还没有饮食记录</div>`}
+ <div class="section-title"><h3>最近记录</h3><button class="link" data-page="timeline">全部</button></div>
+ ${events.slice(0,4).map(eventRow).join("")||`<div class="empty">还没有记录。点击 ＋ 开始。</div>`}`;
+}
+function metric(i,l,v,s){return `<div class="card metric"><span class="label">${i} ${l}</span><div class="value">${v}</div><div class="sub">${s}</div></div>`}
+function eventRow(x){return `<div class="row-card"><div class="row-icon">${x.type==="weight"?"⚖️":x.type==="exercise"?"🏃":"🍽️"}</div><div class="row-main"><strong>${esc(x.title)}</strong><span>${esc(x.summary)}</span></div><span class="status">${new Date(x.timestamp).toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit"})}</span></div>`}
+
+function recordPage(){return `<div class="section-title"><h3>记录什么？</h3><span class="muted">全部手动记录</span></div><div class="quick-grid">
+ <button class="quick" data-quick="weight"><b>⚖️</b><span>体重</span></button>
+ <button class="quick" data-quick="exercise"><b>🏃</b><span>运动</span></button>
+ <button class="quick" data-quick="diet"><b>🍽️</b><span>饮食</span></button>
+ </div>`}
+
+function openRecord(type){
+ let body=`<form id="recordForm" class="form"><div class="form-row">${field("日期","date","date",localDate(),true)}${field("时间","time","time",localTime(),true)}</div>`;
+ if(type==="weight")body+=field("体重 (kg)","value","number","68.4",true)+field("体脂率 (%)","bodyFat","number","");
+ if(type==="exercise")body+=`<div class="field"><label>运动类型</label><select name="activity"><option>步行</option><option>跑步</option><option>骑行</option><option>游泳</option><option>健身</option><option>球类</option><option>其他</option></select></div>${field("持续时间 (分钟)","duration","number","30",true)}${field("距离 (km)","distance","number","")}`;
+ if(type==="diet")body+=`<div class="field"><label>餐次</label><select name="meal"><option>早餐</option><option>午餐</option><option>晚餐</option><option>加餐</option><option>其他</option></select></div>${field("吃了什么","food","text","例如 鸡蛋、牛奶、米饭",true)}${field("热量 (kcal，可选)","calories","number","")}`;
+ body+=field("备注","note","textarea","")+`<div class="actions"><button class="btn">保存</button><button type="button" class="btn secondary" data-close>取消</button></div></form>`;
+ showModal(type==="weight"?"记录体重":type==="exercise"?"记录运动":"记录饮食",body);
+ const recordForm=document.getElementById("recordForm");
+ const now=new Date();
+ const pad=n=>String(n).padStart(2,"0");
+ const dateInput=recordForm.elements.date;
+ const timeInput=recordForm.elements.time;
+ if(dateInput) dateInput.value=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+ if(timeInput) timeInput.value=`${pad(now.getHours())}:${pad(now.getMinutes())}`;
+ recordForm.onsubmit=async e=>{e.preventDefault();let f=new FormData(e.target),x={id:uid(),type,timestamp:localISO(f.get("date"),f.get("time")),createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
+ if(type==="weight"){x.value=+f.get("value");x.bodyFat=f.get("bodyFat")?+f.get("bodyFat"):null;x.title="体重";x.summary=`${x.value} kg`}
+ else if(type==="exercise"){x.activity=f.get("activity");x.duration=+f.get("duration");x.distance=f.get("distance")?+f.get("distance"):null;x.title=x.activity;x.summary=`${x.duration} min${x.distance?` · ${x.distance} km`:""}`}
+ else {x.meal=f.get("meal");x.food=f.get("food");x.calories=f.get("calories")?+f.get("calories"):null;x.title=x.meal;x.summary=x.food+(x.calories?` · ${x.calories} kcal`:"")}
+ x.note=f.get("note")||"";await put("healthEvents",x);closeModal();render()}
+}
+function field(l,n,t="text",p="",req=false){if(t==="textarea")return `<div class="field"><label>${l}</label><textarea name="${n}" placeholder="${p}"></textarea></div>`;const isDateTime=t==="date"||t==="time";return `<div class="field"><label>${l}</label><input name="${n}" type="${t}" ${isDateTime?`value="${esc(p)}"`: `placeholder="${esc(p)}"`} ${req?"required":""}></div>`}
+
+async function trendsPage(){
+ const events=await all("healthEvents"),items=events.filter(x=>x.type===trend).sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp)).slice(-20);
+ const vals=items.map(x=>trend==="weight"?x.value:x.duration).filter(Number.isFinite),max=Math.max(...vals,1),min=Math.min(...vals,0);
+ const pts=vals.map((v,i)=>`${2+(i/Math.max(vals.length-1,1))*96},${95-(v-min)/(max-min||1)*78}`).join(" ");
+ return `<div class="tabs"><button class="tab ${trend==="weight"?"active":""}" data-trend="weight">⚖️ 体重</button><button class="tab ${trend==="exercise"?"active":""}" data-trend="exercise">🏃 运动</button></div>
+ <div class="card"><div class="section-title"><h3>${trend==="weight"?"体重趋势":"运动趋势"}</h3><span class="pill">${vals.length} 条</span></div><div class="chart">${vals.length?`<svg viewBox="0 0 100 100" preserveAspectRatio="none"><polyline points="${pts}" fill="none" stroke="#16877a" stroke-width="2.5" vector-effect="non-scaling-stroke"/>${vals.map((v,i)=>{let x=2+(i/Math.max(vals.length-1,1))*96,y=95-(v-min)/(max-min||1)*78;return `<circle cx="${x}" cy="${y}" r="2.2" fill="#16877a"/>`}).join("")}</svg>`:`<div class="empty">暂无数据</div>`}</div></div>`;
+}
+async function timeline(){
+ const es=(await all("healthEvents")).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));if(!es.length)return `<div class="empty">还没有记录。</div>`;
+ const g={};es.forEach(x=>(g[x.timestamp.slice(0,10)]??=[]).push(x));
+ return Object.entries(g).map(([d,a])=>`<div class="timeline-date">${d}</div>${a.map(x=>`<div class="timeline-item"><div class="timeline-card"><span class="time">${new Date(x.timestamp).toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit"})}</span><strong>${x.type==="weight"?"⚖️":x.type==="exercise"?"🏃":"🍽️"} ${esc(x.title)}</strong><small>${esc(x.summary)}</small></div></div>`).join("")}`).join("");
+}
+async function me(){
+ return `<div class="hero"><div class="date">个人数据</div><h2>我的</h2><div class="muted">管理本地健康数据。所有数据保存在本机。</div></div>
+ <div class="section-title"><h3>数据管理</h3></div><div class="settings">
+ <button class="setting" id="export"><b>📦 导出数据</b><span>JSON ›</span></button>
+ <button class="setting" id="import"><b>📥 导入数据</b><span>JSON ›</span></button><input id="fileInput" type="file" accept=".json" hidden>
+ </div>`}
+function showModal(t,b){document.getElementById("modalTitle").textContent=t;document.getElementById("modalBody").innerHTML=b;document.getElementById("modal").classList.remove("hidden")}
+function closeModal(){document.getElementById("modal").classList.add("hidden")}
+(async()=>{await openDB();render()})();
+</script>
 <script>
 if("serviceWorker"in navigator){
  window.addEventListener("load",async()=>{
