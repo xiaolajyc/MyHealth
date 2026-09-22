@@ -1,10 +1,9 @@
-# 我的健康 V2.4
+# 我的健康 V2.5
 
-本次重点修复：
-- 修复“首页”和“我的”页面崩溃问题，并增加页面错误兜底。
-- Service Worker 改为 Network First，优先获取最新 HTML/CSS/JS。
-- 每次版本使用新的缓存名，并自动删除旧缓存。
-- 注册 Service Worker 时使用 updateViaCache:none。
-- 检测到新版本后自动 SKIP_WAITING + reload，PWA 不再长期卡旧版本。
-- 保留：体重、运动、饮食。
-- 删除：药物、补充剂、睡眠、步数、心率、血压、血糖、体温、饮水、心情、症状、HealthKit。
+修复：
+- 修复首页/我的页面 IndexedDB object store 不存在导致的崩溃。
+- IndexedDB 升级到版本 3：自动创建 healthEvents/settings，并删除旧的药物/补充剂 store。
+- 应用代码彻底移除药物、补充剂相关数据库访问。
+- 保留体重、运动、饮食。
+- Service Worker 版本更新为 v2.5；Network First + 自动更新机制继续生效。
+- 体重、运动、饮食记录默认当前手机本地日期和时间。

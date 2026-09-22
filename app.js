@@ -1,6 +1,5 @@
 let page="home",trend="weight";
 const titles={home:"首页",record:"记录",trends:"趋势",timeline:"时间轴",me:"我的"};
-const info={weight:["⚖️","体重"],exercise:["🏃","运动"],medication:["💊","药物"],supplement:["🧴","补充剂"]};
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 const fmt=d=>new Intl.DateTimeFormat("zh-CN",{month:"short",day:"numeric",weekday:"short"}).format(new Date(d));
 function localDate(){const d=new Date(),p=n=>String(n).padStart(2,"0");return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`}
@@ -13,9 +12,6 @@ document.addEventListener("click",async e=>{
  if(e.target.closest("[data-close]")){closeModal();return}
  const q=e.target.closest("[data-quick]");if(q)openRecord(q.dataset.quick);
 
- const m=e.target.closest("[data-med]");if(m)openProduct(m.dataset.kind,m.dataset.med);
- const add=e.target.closest("[data-add]");if(add)openProduct(add.dataset.add,null);
- const take=e.target.closest("[data-take]");if(take){const store=take.dataset.kind==="medication"?"medicationLogs":"supplementLogs";const logs=await all(store);const exists=logs.some(x=>x.productId===take.dataset.take&&x.timestamp.slice(0,10)===today());if(!exists){await put(store,{id:uid(),productId:take.dataset.take,timestamp:new Date().toISOString()});take.textContent="已服 ✓";take.classList.add("taken");setTimeout(render,300)}else{take.textContent="今天已记录";take.classList.add("taken")}}
  const remove=e.target.closest("[data-delete]");if(remove){await del(remove.dataset.store,remove.dataset.delete);closeModal();render()}
  if(e.target.closest("#export"))await exportData();
  if(e.target.closest("#import"))document.getElementById("fileInput").click();
@@ -40,22 +36,20 @@ async function render(){
 }
 async function home(){
  const events=(await all("healthEvents")).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
- const meds=(await all("medications")).filter(x=>x.active!==false),sups=(await all("supplements")).filter(x=>x.active!==false);
  const w=events.filter(x=>x.type==="weight").sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp))[0];
  const ex=events.filter(x=>x.type==="exercise").sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp))[0];
+ const diet=events.filter(x=>x.type==="diet" && x.timestamp.slice(0,10)===today());
  return `<section class="hero"><div class="date">${new Intl.DateTimeFormat("zh-CN",{year:"numeric",month:"long",day:"numeric",weekday:"long"}).format(new Date())}</div><h2>今天，照顾好自己。</h2><div class="muted">只记录真正有用的健康信息。</div></section>
  <div class="section-title"><h3>今日概览</h3></div><div class="grid">
  ${metric("⚖️","体重",w?`${w.value} kg`:"—",w?fmt(w.timestamp):"暂无记录")}
  ${metric("🏃","运动",ex?`${ex.duration} min`:"—",ex?ex.activity:"暂无记录")}
  </div>
- <div class="section-title"><h3>今日饮食</h3></div>
- ${events.filter(x=>x.type==="diet" && x.timestamp.slice(0,10)===today()).map(eventRow).join("")||`<div class="empty">今天还没有饮食记录</div>`}
+ <div class="section-title"><h3>今日饮食</h3><button class="link" data-page="record">添加</button></div>
+ ${diet.map(eventRow).join("")||`<div class="empty">今天还没有饮食记录</div>`}
  <div class="section-title"><h3>最近记录</h3><button class="link" data-page="timeline">全部</button></div>
- 
  ${events.slice(0,4).map(eventRow).join("")||`<div class="empty">还没有记录。点击 ＋ 开始。</div>`}`;
 }
 function metric(i,l,v,s){return `<div class="card metric"><span class="label">${i} ${l}</span><div class="value">${v}</div><div class="sub">${s}</div></div>`}
-function productRow(x,k){return `<div class="row-card"><div class="row-icon">${k==="medication"?"💊":"🧴"}</div><div class="row-main"><strong>${esc(x.name)}</strong><span>${esc(x.dose)} · ${esc(x.frequency)}${x.times?.length?" · "+esc(x.times.join(" / ")):""}</span></div><button class="take-btn" data-take="${x.id}" data-kind="${k}">今日已服</button></div>`}
 function eventRow(x){return `<div class="row-card"><div class="row-icon">${x.type==="weight"?"⚖️":x.type==="exercise"?"🏃":"🍽️"}</div><div class="row-main"><strong>${esc(x.title)}</strong><span>${esc(x.summary)}</span></div><span class="status">${new Date(x.timestamp).toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit"})}</span></div>`}
 
 function recordPage(){return `<div class="section-title"><h3>记录什么？</h3><span class="muted">全部手动记录</span></div><div class="quick-grid">
@@ -97,8 +91,6 @@ async function me(){
  <button class="setting" id="export"><b>📦 导出数据</b><span>JSON ›</span></button>
  <button class="setting" id="import"><b>📥 导入数据</b><span>JSON ›</span></button><input id="fileInput" type="file" accept=".json" hidden>
  </div>`}
-async function recentLogs(){const meds=await all("medications"),sups=await all("supplements");const map=new Map([...meds.map(x=>[x.id,{...x,kind:"medication"}]),...sups.map(x=>[x.id,{...x,kind:"supplement"}])]);const logs=[...(await all("medicationLogs")),...(await all("supplementLogs"))].sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp)).slice(0,12);if(!logs.length)return `<div class="empty">还没有服用记录</div>`;return logs.map(l=>{const x=map.get(l.productId);if(!x)return "";return `<div class="row-card"><div class="row-icon">${x.kind==="medication"?"💊":"🧴"}</div><div class="row-main"><strong>${esc(x.name)}</strong><span>${new Date(l.timestamp).toLocaleString("zh-CN",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})} · ${esc(x.dose)}</span></div><span class="status done">已服 ✓</span></div>`}).join("")}
-function productCard(x,k){return `<div class="med-card"><div class="med-top"><div><h3>${k==="medication"?"💊":"🧴"} ${esc(x.name)}</h3><p>${esc(x.dose)} · ${esc(x.frequency)}</p></div><span class="pill">使用中</span></div><div class="mini-actions"><button data-med="${x.id}" data-kind="${k}">编辑</button><button data-take="${x.id}" data-kind="${k}">今日已服</button></div></div>`}
 function showModal(t,b){document.getElementById("modalTitle").textContent=t;document.getElementById("modalBody").innerHTML=b;document.getElementById("modal").classList.remove("hidden")}
 function closeModal(){document.getElementById("modal").classList.add("hidden")}
 (async()=>{await openDB();render()})();
