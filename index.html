@@ -15,9 +15,9 @@
 
 
 
-.delete-btn{border:0;background:transparent;color:#a8b7b4;font-size:18px;line-height:1;cursor:pointer;padding:5px 7px;flex:none}.delete-btn:hover{color:#c04d4d}.timeline-card{position:relative;padding-right:48px}.timeline-delete{position:absolute;right:8px;bottom:8px;font-size:11px}.settings-card{padding:16px}.setting-label{display:block;font-size:13px;font-weight:750;margin-bottom:8px}.height-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}.height-row input{flex:1;min-width:0;border:1px solid #dce9e6;border-radius:14px;padding:12px;background:#fff;font:inherit}.version-card{padding:16px;display:flex;justify-content:space-between;align-items:center}.version-card strong{color:#168276;font-size:13px}</style>
+.delete-btn{border:0;background:transparent;color:#a8b7b4;font-size:18px;line-height:1;cursor:pointer;padding:5px 7px;flex:none}.delete-btn:hover{color:#c04d4d}.timeline-card{position:relative;padding-right:48px}.timeline-delete{position:absolute;right:8px;bottom:8px;font-size:11px}.settings-card{padding:16px}.setting-label{display:block;font-size:13px;font-weight:750;margin-bottom:8px}.height-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}.height-row input{flex:1;min-width:0;border:1px solid #dce9e6;border-radius:14px;padding:12px;background:#fff;font:inherit}.version-card{padding:16px;display:flex;justify-content:space-between;align-items:center}.version-card strong{color:#168276;font-size:13px}.goal-card{position:relative;overflow:hidden}.goal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.goal-weight{font-size:28px;font-weight:800}.goal-arrow{opacity:.45;margin:0 5px}.progress{height:9px;background:#e9edf2;border-radius:99px;overflow:hidden;margin:14px 0 8px}.progress>i{display:block;height:100%;background:#111;border-radius:99px}.goal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.goal-stat{padding:11px;border:1px solid #edf0f3;border-radius:12px;background:#fafbfc}.goal-stat b{display:block;font-size:18px;margin-top:3px}.goal-status{margin-top:12px;padding:12px;border-radius:12px;background:#f5f6f7}.goal-good{background:#edf8ef}.goal-warn{background:#fff7e8}.goal-info{background:#f1f5ff}</style>
 <title>我的健康</title>
-<meta name="app-version" content="2.15">
+<meta name="app-version" content="3.0">
 </head>
 <body>
 <div id="app">
@@ -86,6 +86,8 @@ document.addEventListener("click",async e=>{
  const q=e.target.closest("[data-quick]");if(q){await openRecord(q.dataset.quick);return;}
 
  const remove=e.target.closest("[data-delete]");if(remove){e.preventDefault();e.stopPropagation();if(confirm("确定删除这条记录吗？")){await del(remove.dataset.store,remove.dataset.delete);render()}return}
+ if(e.target.closest("#saveBodyParams")){await saveBodyParams();return}
+ if(e.target.closest("#manageGoal")){await openGoal();return}
  if(e.target.closest("#saveHeight")){const v=Number(document.getElementById("heightInput").value);if(v>=50&&v<=250){await saveSettings({heightCm:v});render()}return}
  if(e.target.closest("#export"))await exportData();
  if(e.target.closest("#import"))document.getElementById("fileInput").click();
@@ -112,41 +114,23 @@ async function home(){
  const events=(await all("healthEvents")).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
  const w=events.filter(x=>x.type==="weight").sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp))[0];
  const ex=events.filter(x=>x.type==="exercise").sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp))[0];
- const diet=events.filter(x=>x.type==="diet" && x.timestamp.slice(0,10)===today());
+ const diet=events.filter(x=>x.type==="diet"&&x.timestamp.slice(0,10)===today());
  const now=new Date(),monthKey=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}`;
  const monthlyExerciseCalories=events.filter(x=>x.type==="exercise"&&x.timestamp.slice(0,7)===monthKey).reduce((sum,x)=>sum+(Number(x.calories)||0),0);
- const settings=await getSettings(),height=settings.heightCm>0?Number(settings.heightCm):null;
- const bmi=w&&height?Number(w.value)/(height/100)**2:null;
- const bmiInfo=(()=>{
-   if(bmi==null||!height)return null;
-   const h=height/100, lo=Math.min(bmi,0);
-   if(bmi<18.5){
-     const upper=18.5*h*h;
-     return ["偏低",`< 18.5 · 体重 < ${upper.toFixed(1)} kg`];
-   }
-   if(bmi<25){
-     const lower=18.5*h*h, upper=25*h*h;
-     return ["正常",`18.5–24.9 · ${lower.toFixed(1)}–${upper.toFixed(1)} kg`];
-   }
-   if(bmi<30){
-     const lower=25*h*h, upper=30*h*h;
-     return ["偏高",`25.0–29.9 · ${lower.toFixed(1)}–${upper.toFixed(1)} kg`];
-   }
-   const lower=30*h*h;
-   return ["肥胖",`≥ 30.0 · 体重 ≥ ${lower.toFixed(1)} kg`];
- })();
+ const settings=await getSettings(),height=settings.heightCm>0?Number(settings.heightCm):null,bmi=w&&height?Number(w.value)/(height/100)**2:null;
+ const bmiInfo=(()=>{if(bmi==null||!height)return null;const h=height/100;if(bmi<18.5)return["偏低",`< 18.5 · 体重 < ${(18.5*h*h).toFixed(1)} kg`];if(bmi<25)return["正常",`18.5–24.9 · ${(18.5*h*h).toFixed(1)}–${(25*h*h).toFixed(1)} kg`];if(bmi<30)return["偏高",`25.0–29.9 · ${(25*h*h).toFixed(1)}–${(30*h*h).toFixed(1)} kg`];return["肥胖",`≥ 30.0 · 体重 ≥ ${(30*h*h).toFixed(1)} kg`]})();
+ let goalCard="";
+ const g=settings.weightLossGoal;
+ if(g){
+  const cw=Number(w?.value)||Number(g.startWeight),age=ageFromBirthdate(settings.birthDate),bmr=calcBMR(cw,height,age,settings.sex),tdee=bmr?Math.round(bmr*(Number(settings.activityFactor)||1.2)):null,gt=calcGoalTarget(g.startDate,g.endDate,Number(g.startWeight),Number(g.targetWeight)),lost=Math.max(0,Number(g.startWeight)-cw),pct=Math.max(0,Math.min(100,gt.loss?lost/gt.loss*100:0)),td=today(),food=events.filter(x=>x.type==="diet"&&x.timestamp.slice(0,10)===td).reduce((a,x)=>a+(Number(x.totalCalories??x.calories)||0),0),todayEx=events.filter(x=>x.type==="exercise"&&x.timestamp.slice(0,10)===td).reduce((a,x)=>a+(Number(x.calories)||0),0),base=tdee!=null?Math.max(0,tdee-gt.dailyDeficit):null,budget=base!=null?base+todayEx:null,gap=tdee!=null?tdee+todayEx-food:null,ok=gap!=null&&gap>=gt.dailyDeficit;
+  goalCard=`<div class="section-title"><h3>🎯 减肥目标</h3><button class="link" onclick="openGoal()">管理</button></div><div class="card goal-card"><div class="goal-head"><div><div class="goal-weight">${Number(g.startWeight).toFixed(1)} <span class="goal-arrow">→</span> ${Number(g.targetWeight).toFixed(1)} kg</div><div class="muted">目标日期 ${g.endDate}</div></div><b>${pct.toFixed(0)}%</b></div><div class="progress"><i style="width:${pct.toFixed(1)}%"></i></div><div class="muted">已减 ${lost.toFixed(1)} kg · 还需 ${Math.max(0,cw-Number(g.targetWeight)).toFixed(1)} kg</div><div class="goal-grid"><div class="goal-stat"><span class="muted">目标每日缺口</span><b>${Math.round(gt.dailyDeficit)} kcal</b></div><div class="goal-stat"><span class="muted">今日饮食预算</span><b>${budget!=null?Math.round(budget):"—"} kcal</b></div><div class="goal-stat"><span class="muted">今日已吃</span><b>${Math.round(food)} kcal</b></div><div class="goal-stat"><span class="muted">今日运动</span><b>+${Math.round(todayEx)} kcal</b></div></div><div class="goal-status ${ok?"goal-good":"goal-warn"}">${ok?"🟢 今日目标达成":"🟡 今日还需控制"}${budget!=null?` · 剩余 ${Math.max(0,Math.round(budget-food))} kcal`:""}</div></div>`;
+ }
  return `<section class="hero"><div class="date">${new Intl.DateTimeFormat("zh-CN",{year:"numeric",month:"long",day:"numeric",weekday:"long"}).format(new Date())}</div><h2>今天，照顾好自己。</h2><div class="muted">只记录真正有用的健康信息。</div></section>
- <div class="section-title"><h3>今日概览</h3></div><div class="grid">
- ${metric("⚖️","体重",w?`${w.value} kg`:"—",w?fmt(w.timestamp):"暂无记录")}
- ${metric("🏃","运动",ex?`${ex.duration} min`:"—",ex?ex.activity:"暂无记录")}
- ${metric("📏","BMI",bmi?bmi.toFixed(1):"—",bmiInfo?`${bmiInfo[0]} · ${bmiInfo[1]}`:(height?"暂无体重":"请在设置中输入身高"))}
- ${metric("🔥","本月运动",`${monthlyExerciseCalories} kcal`,`${now.getMonth()+1}月累计消耗`)}
- </div>
- <div class="section-title"><h3>今日饮食</h3><button class="link" data-page="record">添加</button></div>
- ${diet.map(eventRow).join("")||`<div class="empty">今天还没有饮食记录</div>`}
- <div class="section-title"><h3>最近记录</h3><button class="link" data-page="timeline">全部</button></div>
- ${events.slice(0,4).map(eventRow).join("")||`<div class="empty">还没有记录。点击 ＋ 开始。</div>`}`;
+ ${goalCard}<div class="section-title"><h3>今日概览</h3></div><div class="grid">${metric("⚖️","体重",w?`${w.value} kg`:"—",w?fmt(w.timestamp):"暂无记录")}${metric("🏃","运动",ex?`${ex.duration} min`:"—",ex?ex.activity:"暂无记录")}${metric("📏","BMI",bmi?bmi.toFixed(1):"—",bmiInfo?`${bmiInfo[0]} · ${bmiInfo[1]}`:(height?"暂无体重":"请在设置中输入身高"))}${metric("🔥","本月运动",`${monthlyExerciseCalories} kcal`,`${now.getMonth()+1}月累计消耗`)}</div>
+ <div class="section-title"><h3>今日饮食</h3><button class="link" data-page="record">添加</button></div>${diet.map(eventRow).join("")||`<div class="empty">今天还没有饮食记录</div>`}
+ <div class="section-title"><h3>最近记录</h3><button class="link" data-page="timeline">全部</button></div>${events.slice(0,4).map(eventRow).join("")||`<div class="empty">还没有记录。点击 ＋ 开始。</div>`}`;
 }
+
 function metric(i,l,v,s){return `<div class="card metric"><span class="label">${i} ${l}</span><div class="value">${v}</div><div class="sub">${s}</div></div>`}
 function eventRow(x){return `<div class="row-card"><div class="row-icon">${x.type==="weight"?"⚖️":x.type==="exercise"?"🏃":"🍽️"}</div><div class="row-main"><strong>${esc(x.title)}</strong><span>${esc(x.summary)}</span></div><span class="status">${new Date(x.timestamp).toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit"})}</span><button class="delete-btn" data-delete="${esc(x.id)}" data-store="healthEvents" aria-label="删除">×</button></div>`}
 
@@ -211,14 +195,30 @@ async function timeline(){
 }
 async function me(){
  const settings=await getSettings(),h=settings.heightCm||"";
- return `<div class="hero"><div class="date">APP SETTINGS</div><h2>设置</h2><div class="muted">管理个人信息、健康计算和本地数据。</div></div>
+ return `<div class="hero"><div class="date">APP SETTINGS</div><h2>设置</h2><div class="muted">管理个人信息、身体参数和本地数据。</div>
  <div class="section-title"><h3>个人信息</h3></div>
- <div class="card settings-card"><label class="setting-label">身高 (cm)</label><div class="height-row"><input id="heightInput" type="number" step="0.1" inputmode="decimal" min="50" max="250" value="${esc(h)}" placeholder="例如 175"><button class="btn" id="saveHeight">保存</button></div><small class="muted">输入一次后，首页会根据最近一次体重自动计算 BMI。</small></div>
- <div class="section-title"><h3>数据管理</h3></div><div class="settings">
- <button class="setting" id="export"><b>📦 导出数据</b><span>JSON ›</span></button>
- <button class="setting" id="import"><b>📥 导入数据</b><span>JSON ›</span></button><input id="fileInput" type="file" accept=".json" hidden>
- </div>
- <div class="section-title"><h3>关于</h3></div><div class="card version-card"><span>我的健康</span><strong>版本 2.15</strong></div>`}
+ <div class="card settings-card"><label class="setting-label">身高 (cm)</label><div class="height-row"><input id="heightInput" type="number" step="0.1" inputmode="decimal" min="50" max="250" value="${esc(h)}" placeholder="例如 175"><button class="btn" id="saveHeight">保存</button></div><small class="muted">用于 BMI 和热量计算。</small></div>
+ <div class="section-title"><h3>身体参数</h3></div><div class="card settings-card">
+ <div class="field"><label>性别</label><select id="setSex"><option value="男" ${(settings.sex||"男")==="男"?"selected":""}>男</option><option value="女" ${settings.sex==="女"?"selected":""}>女</option></select></div>
+ <div class="field"><label>出生日期</label><input id="setBirth" type="date" value="${esc(settings.birthDate||"")}"></div>
+ <div class="field"><label>日常活动强度</label><select id="setActivity"><option value="1.2" ${String(settings.activityFactor||1.2)==="1.2"?"selected":""}>1.20 · 久坐</option><option value="1.375" ${String(settings.activityFactor)==="1.375"?"selected":""}>1.375 · 轻度活动</option><option value="1.55" ${String(settings.activityFactor)==="1.55"?"selected":""}>1.55 · 中度活动</option><option value="1.725" ${String(settings.activityFactor)==="1.725"?"selected":""}>1.725 · 高度活动</option><option value="1.9" ${String(settings.activityFactor)==="1.9"?"selected":""}>1.90 · 极高活动</option></select></div>
+ <button class="btn" id="saveBodyParams">保存身体参数</button></div>
+ <div class="section-title"><h3>减肥目标</h3></div><div class="settings"><button class="setting" id="manageGoal"><b>🎯 减肥目标</b><span>${settings.weightLossGoal?"已设置 ›":"设置 ›"}</span></button></div>
+ <div class="section-title"><h3>数据管理</h3></div><div class="settings"><button class="setting" id="export"><b>📦 导出数据</b><span>JSON ›</span></button><button class="setting" id="import"><b>📥 导入数据</b><span>JSON ›</span></button><input id="fileInput" type="file" accept=".json" hidden></div>
+ <div class="section-title"><h3>关于</h3></div><div class="card version-card"><span>我的健康</span><strong>版本 3.0</strong></div>`}
+
+function getLocalDateValue(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function daysBetween(a,b){return Math.max(1,Math.round((new Date(b+"T00:00:00")-new Date(a+"T00:00:00"))/86400000))}
+function ageFromBirthdate(b){if(!b)return null;const d=new Date(b+"T00:00:00"),n=new Date();let a=n.getFullYear()-d.getFullYear();const m=n.getMonth()-d.getMonth();if(m<0||(m===0&&n.getDate()<d.getDate()))a--;return a}
+function calcBMR(w,h,a,sex){if(!(w>0&&h>0&&a>=10))return null;return Math.round(10*w+6.25*h-5*a+(sex==="女"?-161:5))}
+function calcGoalTarget(st,en,sw,tw){const days=daysBetween(st,en),loss=Math.max(0,sw-tw);return{days,loss,weekly:loss/days*7,dailyDeficit:loss*7700/days}}
+async function saveBodyParams(){await saveSettings({sex:document.getElementById("setSex")?.value||"男",birthDate:document.getElementById("setBirth")?.value||"",activityFactor:+(document.getElementById("setActivity")?.value||1.2)});await render()}
+async function openGoal(){
+ const st=await getSettings(),ev=await all("healthEvents"),latest=ev.filter(x=>x.type==="weight").sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp))[0],g=st.weightLossGoal||{};const d=new Date();d.setMonth(d.getMonth()+3);
+ showModal("🎯 减肥目标",`<form id="goalForm"><div class="field"><label>当前体重 (kg)</label><input name="startWeight" type="number" step="0.1" min="1" value="${g.startWeight||latest?.value||""}" required></div><div class="field"><label>目标体重 (kg)</label><input name="targetWeight" type="number" step="0.1" min="1" value="${g.targetWeight||""}" required></div><div class="field"><label>开始日期</label><input name="startDate" type="date" value="${g.startDate||getLocalDateValue()}" required></div><div class="field"><label>目标日期</label><input name="endDate" type="date" value="${g.endDate||`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}" required></div><div class="goal-status goal-info" id="goalPreview">输入目标后自动计算</div><div class="actions"><button type="button" class="btn secondary" onclick="closeModal()">取消</button><button class="btn" type="submit">保存目标</button></div></form>`);
+ const f=document.getElementById("goalForm"),pr=document.getElementById("goalPreview");
+ const update=()=>{const sw=+f.elements.startWeight.value,tw=+f.elements.targetWeight.value,sd=f.elements.startDate.value,ed=f.elements.endDate.value;if(!(sw>tw&&tw>0&&ed>sd)){pr.textContent="请输入有效的目标体重和日期";return}const x=calcGoalTarget(sd,ed,sw,tw);pr.innerHTML=`需要减重 <b>${x.loss.toFixed(1)} kg</b><br>目标速度 <b>${x.weekly.toFixed(2)} kg/周</b><br>理论平均每日热量缺口 <b>${Math.round(x.dailyDeficit)} kcal</b>`};f.addEventListener("input",update);f.addEventListener("change",update);f.onsubmit=async e=>{e.preventDefault();const q=new FormData(f),sw=+q.get("startWeight"),tw=+q.get("targetWeight"),sd=q.get("startDate"),ed=q.get("endDate");if(!(sw>tw&&tw>0&&ed>sd)){alert("请检查目标");return}await saveSettings({weightLossGoal:{startWeight:sw,targetWeight:tw,startDate:sd,endDate:ed,status:"active",createdAt:new Date().toISOString()}});closeModal();await render()};update()
+}
 function showModal(t,b){document.getElementById("modalTitle").textContent=t;document.getElementById("modalBody").innerHTML=b;document.getElementById("modal").classList.remove("hidden")}
 function closeModal(){document.getElementById("modal").classList.add("hidden")}
 (async()=>{try{await openDB();await render()}catch(e){console.error(e);document.getElementById("main").innerHTML=`<div class="empty"><strong>页面加载失败</strong><br><span class="muted">${esc(e.message||"未知错误")}</span><br><button class="btn" style="margin-top:12px" onclick="location.reload()">重新加载</button></div>`}})();
