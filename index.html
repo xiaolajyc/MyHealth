@@ -19,7 +19,7 @@
 .drive-sync-card{margin-top:14px}.drive-status{font-size:13px;color:#78918d;min-height:20px;margin:7px 0 12px}.drive-status.ok{color:#168276}.drive-status.error{color:#c84d4d}.drive-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.drive-actions button{min-height:45px}.drive-secondary{border:0;border-radius:14px;padding:12px;background:#edf7f4;color:#167b70;font-weight:750}.drive-progress{display:none;margin-top:12px}.drive-progress.show{display:block}.drive-track{height:7px;background:#e6efec;border-radius:99px;overflow:hidden}.drive-bar{height:100%;width:0;background:#16877a;border-radius:99px;transition:width .2s}.drive-progress-text{display:flex;justify-content:space-between;margin-top:5px;font-size:11px;color:#78918d}.drive-auto{display:flex;align-items:center;gap:9px;margin-top:13px;font-size:12px;color:#55706b}.drive-auto input{width:18px;height:18px;accent-color:#16877a}
 </style>
 <title>我的健康</title>
-<meta name="app-version" content="3.2">
+<meta name="app-version" content="3.3">
 </head>
 <body>
 <div id="app">
@@ -214,7 +214,7 @@ async function me(){
  <div class="section-title"><h3>减肥目标</h3></div><div class="settings"><button class="setting" id="manageGoal"><b>🎯 减肥目标</b><span>${settings.weightLossGoal?"已设置 ›":"设置 ›"}</span></button></div>
  <div class="section-title"><h3>☁️ 多设备同步</h3></div><div class="card drive-sync-card"><div id="driveStatus">未连接</div><div class="drive-actions"><button class="btn" id="driveConnect">连接 Google Drive</button><button class="drive-secondary" id="driveDisconnect">断开</button><button class="btn" id="driveUpload">☁️ 上传 / 同步</button><button class="drive-secondary" id="driveDownload">⬇️ 从云端恢复</button></div><label class="drive-auto"><input type="checkbox" id="driveAutoSync"><span>数据修改后自动同步</span></label><div id="driveProgress" class="drive-progress"><div class="drive-track"><div id="driveBar" class="drive-bar"></div></div><div class="drive-progress-text"><span id="driveText">准备同步…</span><span id="drivePct">0%</span></div></div><div class="muted" style="margin-top:10px">健康记录和设置会同步到你的 Google Drive。数据仍保存在本机浏览器。首次连接需要 Google 授权。</div></div>
  <div class="section-title"><h3>数据管理</h3></div><div class="settings"><button class="setting" id="export"><b>📦 导出数据</b><span>JSON ›</span></button><button class="setting" id="import"><b>📥 导入数据</b><span>JSON ›</span></button><input id="fileInput" type="file" accept=".json" hidden></div>
- <div class="section-title"><h3>关于</h3></div><div class="card version-card"><span>我的健康</span><strong>版本 3.2</strong></div>`}
+ <div class="section-title"><h3>关于</h3></div><div class="card version-card"><span>我的健康</span><strong>版本 3.3</strong></div>`}
 
 function kjToKcal(kj){return (Number(kj)||0)/4.184}
 function normalizeDietEnergy(value,unit){const n=Number(value)||0;return unit==="kj"?n/4.184:n}
@@ -223,12 +223,14 @@ function daysBetween(a,b){return Math.max(1,Math.round((new Date(b+"T00:00:00")-
 function ageFromBirthdate(b){if(!b)return null;const d=new Date(b+"T00:00:00"),n=new Date();let a=n.getFullYear()-d.getFullYear();const m=n.getMonth()-d.getMonth();if(m<0||(m===0&&n.getDate()<d.getDate()))a--;return a}
 function calcBMR(w,h,a,sex){if(!(w>0&&h>0&&a>=10))return null;return Math.round(10*w+6.25*h-5*a+(sex==="女"?-161:5))}
 function calcGoalTarget(st,en,sw,tw){const days=daysBetween(st,en),loss=Math.max(0,sw-tw);return{days,loss,weekly:loss/days*7,dailyDeficit:loss*7700/days}}
-async function saveBodyParams(){await saveSettings({sex:document.getElementById("setSex")?.value||"男",birthDate:document.getElementById("setBirth")?.value||"",activityFactor:+(document.getElementById("setActivity")?.value||1.2)});await render()}
-async function openGoal(){
- const st=await getSettings(),ev=await all("healthEvents"),latest=ev.filter(x=>x.type==="weight").sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp))[0],g=st.weightLossGoal||{};const d=new Date();d.setMonth(d.getMonth()+3);
- showModal("🎯 减肥目标",`<form id="goalForm"><div class="field"><label>当前体重 (kg)</label><input name="startWeight" type="number" step="0.1" min="1" value="${g.startWeight||latest?.value||""}" required></div><div class="field"><label>目标体重 (kg)</label><input name="targetWeight" type="number" step="0.1" min="1" value="${g.targetWeight||""}" required></div><div class="field"><label>开始日期</label><input name="startDate" type="date" value="${g.startDate||getLocalDateValue()}" required></div><div class="field"><label>目标日期</label><input name="endDate" type="date" value="${g.endDate||`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}" required></div><div class="goal-status goal-info" id="goalPreview">输入目标后自动计算</div><div class="actions"><button type="button" class="btn secondary" onclick="closeModal()">取消</button><button class="btn" type="submit">保存目标</button></div></form>`);
- const f=document.getElementById("goalForm"),pr=document.getElementById("goalPreview");
- const update=()=>{const sw=+f.elements.startWeight.value,tw=+f.elements.targetWeight.value,sd=f.elements.startDate.value,ed=f.elements.endDate.value;if(!(sw>tw&&tw>0&&ed>sd)){pr.textContent="请输入有效的目标体重和日期";return}const x=calcGoalTarget(sd,ed,sw,tw);pr.innerHTML=`需要减重 <b>${x.loss.toFixed(1)} kg</b><br>目标速度 <b>${x.weekly.toFixed(2)} kg/周</b><br>理论平均每日热量缺口 <b>${Math.round(x.dailyDeficit)} kcal</b>`};f.addEventListener("input",update);f.addEventListener("change",update);f.onsubmit=async e=>{e.preventDefault();const q=new FormData(f),sw=+q.get("startWeight"),tw=+q.get("targetWeight"),sd=q.get("startDate"),ed=q.get("endDate");if(!(sw>tw&&tw>0&&ed>sd)){alert("请检查目标");return}await saveSettings({weightLossGoal:{startWeight:sw,targetWeight:tw,startDate:sd,endDate:ed,status:"active",createdAt:new Date().toISOString()}});closeModal();await render()};update()
+async function saveBodyParams(){
+ const height=document.getElementById("heightInput")?.value;
+ const sex=document.getElementById("setSex")?.value||"男";
+ const birthDate=document.getElementById("setBirth")?.value||"";
+ const activityFactor=Number(document.getElementById("setActivity")?.value||1.2);
+ await saveSettings({heightCm:height===""?null:Number(height),sex,birthDate,activityFactor});
+ alert("身体参数已保存");
+ await render();
 }
 function showModal(t,b){document.getElementById("modalTitle").textContent=t;document.getElementById("modalBody").innerHTML=b;document.getElementById("modal").classList.remove("hidden")}
 function closeModal(){document.getElementById("modal").classList.add("hidden")}
@@ -279,5 +281,17 @@ if("serviceWorker"in navigator){
  });
 }
 </script>
-</body>
+<script>
+function syncDietEnergyUnit(select){
+ const f=select.closest("form")||select.parentElement;
+ const i=f?.querySelector('input[name="calories"],input[name="kcal"],input[name="energy"],#dietCalories');
+ if(!i)return;
+ const old=select.dataset.unit||"kcal",v=Number(i.value);
+ if(!Number.isFinite(v))return;
+ const kcal=old==="kj"?v/4.184:v;
+ i.value=select.value==="kj"?(kcal*4.184).toFixed(0):kcal.toFixed(1);
+ select.dataset.unit=select.value;
+}
+document.addEventListener("change",e=>{if(e.target.id==="dietEnergyUnit")syncDietEnergyUnit(e.target)});
+</script></body>
 </html>
