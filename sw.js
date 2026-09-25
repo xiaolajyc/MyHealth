@@ -1,4 +1,4 @@
-const VERSION="2026-09-23-v3.8";
+const VERSION="2026-09-23-v3.9";
 const CACHE=`my-health-${VERSION}`;
 const SHELL=["./","./index.html","./manifest.json","./icon-192.png","./icon-512.png","./apple-touch-icon-180.png"];
 
