@@ -22,9 +22,10 @@
 .rolling-grid,.projection-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:10px 0}.rolling-grid>div,.projection-grid>div{padding:10px;border-radius:12px;background:var(--bg,#f6f7f9);display:flex;flex-direction:column;gap:4px}.rolling-grid span,.projection-grid span,.rolling-sub{font-size:12px;opacity:.65}.rolling-grid b,.projection-grid b{font-size:16px}.rolling-status{padding:11px 12px;border-radius:12px;font-weight:600}.rolling-status.good{background:#eaf7ed}.rolling-status.warn{background:#fff2e6}.rolling-sub{margin-top:8px}
 @media(max-width:420px){.rolling-grid,.projection-grid{gap:7px}.rolling-grid b,.projection-grid b{font-size:14px}}
 .weight-projection-card,.goal-rolling-card{margin-top:12px}.card-title{font-weight:700;margin-bottom:8px}
+.today-diet-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:10px 0}.today-diet-grid>div{padding:10px;border-radius:12px;background:var(--bg,#f6f7f9);display:flex;flex-direction:column;gap:4px}.today-diet-grid span{font-size:12px;opacity:.65}.today-diet-grid b{font-size:16px}
 </style>
 <title>我的健康</title>
-<meta name="app-version" content="3.6">
+<meta name="app-version" content="3.7">
 </head>
 <body>
 <div id="app">
@@ -120,6 +121,7 @@ async function render(){
  m.innerHTML=`<div class="empty"><strong>页面加载失败</strong><br><span class="muted">${esc(err.message||"未知错误")}</span><br><button class="btn" style="margin-top:12px" onclick="location.reload()">重新加载</button></div>`;
 }
  if(page==="home"){
+  if(typeof renderTodayDiet==="function")await renderTodayDiet();
   if(typeof renderWeightProjection==="function")await renderWeightProjection();
   if(typeof renderRolling7==="function")await renderRolling7();
  }
@@ -148,6 +150,7 @@ async function home(){
  return `<section class="hero"><div class="date">${new Intl.DateTimeFormat("zh-CN",{year:"numeric",month:"long",day:"numeric",weekday:"long"}).format(new Date())}</div><h2>今天，照顾好自己。</h2><div class="muted">只记录真正有用的健康信息。</div></section>
  ${goalCard}
  <div class="card weight-projection-card"><div class="card-title">📈 实际减重进度</div><div id="weightProjection">正在计算…</div></div>
+ <div class="card today-diet-card"><div class="card-title">🍽️ 今日饮食</div><div id="todayDietContent">正在计算…</div></div>
  <div class="card goal-rolling-card"><div class="card-title">🍽️ 滚动 7 天饮食表现</div><div id="rolling7Content">正在计算…</div></div>
  <div class="section-title"><h3>今日概览</h3></div><div class="grid">${metric("⚖️","体重",w?`${w.value} kg`:"—",w?fmt(w.timestamp):"暂无记录")}${metric("🏃","运动",ex?`${ex.duration} min`:"—",ex?ex.activity:"暂无记录")}${metric("📏","BMI",bmi?bmi.toFixed(1):"—",bmiInfo?`${bmiInfo[0]} · ${bmiInfo[1]}`:(height?"暂无体重":"请在设置中输入身高"))}${metric("🔥","本月运动",`${monthlyExerciseCalories} kcal`,`${now.getMonth()+1}月累计消耗`)}</div>
  <div class="section-title"><h3>今日饮食</h3><button class="link" data-page="record">添加</button></div>${diet.map(eventRow).join("")||`<div class="empty">今天还没有饮食记录</div>`}
@@ -234,7 +237,7 @@ async function me(){
  <div class="section-title"><h3>减肥目标</h3></div><div class="settings"><button class="setting" id="manageGoal"><b>🎯 减肥目标</b><span>${settings.weightLossGoal?"已设置 ›":"设置 ›"}</span></button></div>
  <div class="section-title"><h3>☁️ 多设备同步</h3></div><div class="card drive-sync-card"><div id="driveStatus">未连接</div><div class="drive-actions"><button class="btn" id="driveConnect">连接 Google Drive</button><button class="drive-secondary" id="driveDisconnect">断开</button><button class="btn" id="driveUpload">☁️ 上传 / 同步</button><button class="drive-secondary" id="driveDownload">⬇️ 从云端恢复</button></div><label class="drive-auto"><input type="checkbox" id="driveAutoSync"><span>数据修改后自动同步</span></label><div id="driveProgress" class="drive-progress"><div class="drive-track"><div id="driveBar" class="drive-bar"></div></div><div class="drive-progress-text"><span id="driveText">准备同步…</span><span id="drivePct">0%</span></div></div><div class="muted" style="margin-top:10px">健康记录和设置会同步到你的 Google Drive。数据仍保存在本机浏览器。首次连接需要 Google 授权。</div></div>
  <div class="section-title"><h3>数据管理</h3></div><div class="settings"><button class="setting" id="export"><b>📦 导出数据</b><span>JSON ›</span></button><button class="setting" id="import"><b>📥 导入数据</b><span>JSON ›</span></button><input id="fileInput" type="file" accept=".json" hidden></div>
- <div class="section-title"><h3>关于</h3></div><div class="card version-card"><span>我的健康</span><strong>版本 3.6</strong></div>`}
+ <div class="section-title"><h3>关于</h3></div><div class="card version-card"><span>我的健康</span><strong>版本 3.7</strong></div>`}
 
 function kjToKcal(kj){return (Number(kj)||0)/4.184}
 function normalizeDietEnergy(value,unit){const n=Number(value)||0;return unit==="kj"?n/4.184:n}
@@ -293,6 +296,20 @@ async function saveBodyParams(){
 }
 
 
+async function renderTodayDiet(){
+ const el=document.getElementById("todayDietContent");if(!el)return;
+ const settings=await getSettings(),events=await all("healthEvents"),today=localDateKey();
+ const food=events.filter(x=>x.type==="diet"&&x.timestamp.slice(0,10)===today).reduce((a,x)=>a+(Number(x.totalCalories??((x.calories||0)*(x.quantity||1)))||0),0);
+ const ex=events.filter(x=>x.type==="exercise"&&x.timestamp.slice(0,10)===today).reduce((a,x)=>a+(Number(x.calories)||0),0);
+ const g=settings.weightLossGoal||{},w=events.filter(x=>x.type==="weight").sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp))[0];
+ const weight=Number(w?.value)||Number(g.startWeight),height=Number(settings.heightCm),age=ageFromBirthdate(settings.birthDate),bmr=calcBMR(weight,height,age,settings.sex),tdee=bmr?bmr*(Number(settings.activityFactor)||1.2):null;
+ let deficit=0;if(g.startWeight&&g.targetWeight&&g.startDate&&g.endDate)deficit=(Number(g.startWeight)-Number(g.targetWeight))*7700/daysBetween(g.startDate,g.endDate);
+ const base=tdee!=null?Math.max(0,tdee-deficit):null,budget=base!=null?base+ex:null,margin=budget!=null?budget-food:null;
+ if(budget==null){el.innerHTML=`<div class="muted">设置身体参数和减肥目标后，这里会显示今日饮食预算。</div>`;return}
+ const good=margin>=0;
+ el.innerHTML=`<div class="today-diet-grid"><div><span>已吃</span><b>${Math.round(food).toLocaleString()} kcal</b></div><div><span>今日预算</span><b>${Math.round(budget).toLocaleString()} kcal</b></div><div><span>运动加成</span><b>+${Math.round(ex).toLocaleString()} kcal</b></div><div><span>预算余量</span><b>${good?"":"−"}${Math.round(Math.abs(margin)).toLocaleString()} kcal</b></div></div><div class="rolling-status ${good?"good":"warn"}">${good?"🟢 今日预算内":"🔴 今日超过预算"} ${Math.round(Math.abs(margin))} kcal</div>`;
+}
+
 async function renderWeightProjection(){
  const el=document.getElementById("weightProjection");if(!el)return;
  const settings=await getSettings(),events=await all("healthEvents"),g=settings.weightLossGoal||{},p=weightTrendProjection(events,g);
@@ -305,15 +322,16 @@ async function renderRolling7(){
  const el=document.getElementById("rolling7Content"); if(!el)return;
  const settings=await getSettings(),events=await all("healthEvents"),r=rolling7Performance(events,settings);
  if(r.budget<=0){el.innerHTML=`<div class="muted">记录身体参数和减肥目标后，这里会显示滚动 7 天预算。</div>`;return}
- const over=r.delta<0,abs=Math.abs(r.delta),pct=r.targetDeficit>0?Math.round(Math.max(0,Math.min(100,(-r.delta)/r.targetDeficit*100))):null;
+ const margin=r.budget-r.food,good=margin>=0,abs=Math.abs(margin);
+ const pct=r.targetDeficit>0?Math.round(Math.max(0,Math.min(100,(-margin+r.targetDeficit)/r.targetDeficit*100))):null;
  el.innerHTML=`
  <div class="rolling-grid">
   <div><span>实际摄入</span><b>${Math.round(r.food).toLocaleString()} kcal</b></div>
   <div><span>7天预算</span><b>${Math.round(r.budget).toLocaleString()} kcal</b></div>
-  <div><span>运动</span><b>+${Math.round(r.exercise).toLocaleString()} kcal</b></div>
-  <div><span>累计差额</span><b>${over?"−":"+"}${Math.round(abs).toLocaleString()} kcal</b></div>
+  <div><span>运动加成</span><b>+${Math.round(r.exercise).toLocaleString()} kcal</b></div>
+  <div><span>预算余量</span><b>${good?"":"−"}${Math.round(abs).toLocaleString()} kcal</b></div>
  </div>
- <div class="rolling-status ${over?"good":"warn"}">${over?"🟢 7天低于预算":"🔴 7天超过预算"} ${Math.round(abs).toLocaleString()} kcal</div>
+ <div class="rolling-status ${good?"good":"warn"}">${good?"🟢 低于预算":"🔴 超过预算"} ${Math.round(abs).toLocaleString()} kcal</div>
  ${pct!=null?`<div class="rolling-sub">按目标热量缺口计算：7天目标缺口 ${Math.round(r.targetDeficit).toLocaleString()} kcal · 当前完成约 ${pct}%</div>`:""}`;
 }
 
