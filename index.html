@@ -18,9 +18,12 @@
 .delete-btn{border:0;background:transparent;color:#a8b7b4;font-size:18px;line-height:1;cursor:pointer;padding:5px 7px;flex:none}.delete-btn:hover{color:#c04d4d}.timeline-card{position:relative;padding-right:48px}.timeline-delete{position:absolute;right:8px;bottom:8px;font-size:11px}.settings-card{padding:16px}.setting-label{display:block;font-size:13px;font-weight:750;margin-bottom:8px}.height-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}.height-row input{flex:1;min-width:0;border:1px solid #dce9e6;border-radius:14px;padding:12px;background:#fff;font:inherit}.version-card{padding:16px;display:flex;justify-content:space-between;align-items:center}.version-card strong{color:#168276;font-size:13px}.goal-card{position:relative;overflow:hidden}.goal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.goal-weight{font-size:28px;font-weight:800}.goal-arrow{opacity:.45;margin:0 5px}.progress{height:9px;background:#e9edf2;border-radius:99px;overflow:hidden;margin:14px 0 8px}.progress>i{display:block;height:100%;background:#111;border-radius:99px}.goal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.goal-stat{padding:11px;border:1px solid #edf0f3;border-radius:12px;background:#fafbfc}.goal-stat b{display:block;font-size:18px;margin-top:3px}.goal-status{margin-top:12px;padding:12px;border-radius:12px;background:#f5f6f7}.goal-good{background:#edf8ef}.goal-warn{background:#fff7e8}.goal-info{background:#f1f5ff}
 .drive-sync-card{margin-top:14px}.drive-status{font-size:13px;color:#78918d;min-height:20px;margin:7px 0 12px}.drive-status.ok{color:#168276}.drive-status.error{color:#c84d4d}.drive-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.drive-actions button{min-height:45px}.drive-secondary{border:0;border-radius:14px;padding:12px;background:#edf7f4;color:#167b70;font-weight:750}.drive-progress{display:none;margin-top:12px}.drive-progress.show{display:block}.drive-track{height:7px;background:#e6efec;border-radius:99px;overflow:hidden}.drive-bar{height:100%;width:0;background:#16877a;border-radius:99px;transition:width .2s}.drive-progress-text{display:flex;justify-content:space-between;margin-top:5px;font-size:11px;color:#78918d}.drive-auto{display:flex;align-items:center;gap:9px;margin-top:13px;font-size:12px;color:#55706b}.drive-auto input{width:18px;height:18px;accent-color:#16877a}
 .energy-input-row{display:flex;gap:8px;align-items:stretch}.energy-input-row input{flex:1}.energy-input-row select{width:88px;border:1px solid var(--border,#ddd);border-radius:10px;padding:0 8px;background:var(--card,#fff)}
+
+.rolling-grid,.projection-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:10px 0}.rolling-grid>div,.projection-grid>div{padding:10px;border-radius:12px;background:var(--bg,#f6f7f9);display:flex;flex-direction:column;gap:4px}.rolling-grid span,.projection-grid span,.rolling-sub{font-size:12px;opacity:.65}.rolling-grid b,.projection-grid b{font-size:16px}.rolling-status{padding:11px 12px;border-radius:12px;font-weight:600}.rolling-status.good{background:#eaf7ed}.rolling-status.warn{background:#fff2e6}.rolling-sub{margin-top:8px}
+@media(max-width:420px){.rolling-grid,.projection-grid{gap:7px}.rolling-grid b,.projection-grid b{font-size:14px}}
 </style>
 <title>我的健康</title>
-<meta name="app-version" content="3.5">
+<meta name="app-version" content="3.6">
 </head>
 <body>
 <div id="app">
@@ -72,6 +75,9 @@ async function importData(file){const x=JSON.parse(await file.text());for(const 
 async function getSettings(){const rows=await all("settings");return rows.find(x=>x.id==="preferences")||{id:"preferences",heightCm:null,foodCalories:{}}}
 async function saveSettings(patch){const old=await getSettings();const next={...old,...patch,id:"preferences"};await put("settings",next);return next}
 
+
+const __healthRender=render;
+render=async function(){const r=await __healthRender.apply(this,arguments);try{await renderWeightProjection();await renderRolling7()}catch(e){console.error(e)}return r};
 </script>
 <script>
 let page="home",trend="weight";
@@ -145,8 +151,7 @@ async function home(){
 }
 
 function metric(i,l,v,s){return `<div class="card metric"><span class="label">${i} ${l}</span><div class="value">${v}</div><div class="sub">${s}</div></div>`}
-function eventRow(x){return `<div class="row-card"><div class="row-icon">${x.type==="weight"?"⚖️":x.type==="exercise"?"🏃":"🍽️"}</div><div class="row-main"><strong>${esc(x.title)}</strong><span>${esc(x.summary)}</span></div><span class="status">${new Date(x.timestamp).toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit"})}</span><button class="delete-btn" data-delete="${esc(x.id)}" data-store="healthEvents" aria-label="删除">×</button></div>`}
-
+function eventRow(x){return `<div class="row-card"><div class="row-icon">${x.type==="weight"?"⚖️":x.type==="exercise"?"🏃":"🍽️"}</div><div class="row-main"><b>${esc(x.title||x.food||"记录")}</b><span>${new Date(x.timestamp).toLocaleString()}</span></div><div class="row-value">${x.type==="weight"?(Number(x.value)||0)+" kg":x.type==="exercise"?(Number(x.calories)||0)+" kcal":(Number(x.totalCalories??x.calories)||0)+" kcal"}</div></div>`}
 function recordPage(){return `<div class="section-title"><h3>记录什么？</h3><span class="muted">全部手动记录</span></div><div class="quick-grid">
  <button class="quick" data-quick="weight"><b>⚖️</b><span>体重</span></button>
  <button class="quick" data-quick="exercise"><b>🏃</b><span>运动</span></button>
@@ -225,10 +230,49 @@ async function me(){
  <div class="section-title"><h3>减肥目标</h3></div><div class="settings"><button class="setting" id="manageGoal"><b>🎯 减肥目标</b><span>${settings.weightLossGoal?"已设置 ›":"设置 ›"}</span></button></div>
  <div class="section-title"><h3>☁️ 多设备同步</h3></div><div class="card drive-sync-card"><div id="driveStatus">未连接</div><div class="drive-actions"><button class="btn" id="driveConnect">连接 Google Drive</button><button class="drive-secondary" id="driveDisconnect">断开</button><button class="btn" id="driveUpload">☁️ 上传 / 同步</button><button class="drive-secondary" id="driveDownload">⬇️ 从云端恢复</button></div><label class="drive-auto"><input type="checkbox" id="driveAutoSync"><span>数据修改后自动同步</span></label><div id="driveProgress" class="drive-progress"><div class="drive-track"><div id="driveBar" class="drive-bar"></div></div><div class="drive-progress-text"><span id="driveText">准备同步…</span><span id="drivePct">0%</span></div></div><div class="muted" style="margin-top:10px">健康记录和设置会同步到你的 Google Drive。数据仍保存在本机浏览器。首次连接需要 Google 授权。</div></div>
  <div class="section-title"><h3>数据管理</h3></div><div class="settings"><button class="setting" id="export"><b>📦 导出数据</b><span>JSON ›</span></button><button class="setting" id="import"><b>📥 导入数据</b><span>JSON ›</span></button><input id="fileInput" type="file" accept=".json" hidden></div>
- <div class="section-title"><h3>关于</h3></div><div class="card version-card"><span>我的健康</span><strong>版本 3.5</strong></div>`}
+ <div class="section-title"><h3>关于</h3></div><div class="card version-card"><span>我的健康</span><strong>版本 3.6</strong></div>`}
 
 function kjToKcal(kj){return (Number(kj)||0)/4.184}
 function normalizeDietEnergy(value,unit){const n=Number(value)||0;return unit==="kj"?n/4.184:n}
+
+function localDateKey(d=new Date()){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function dateKeyOffset(key,days){const d=new Date(key+"T00:00:00");d.setDate(d.getDate()+days);return localDateKey(d)}
+function rolling7Performance(events,settings){
+ const todayKey=localDateKey(), rows=[];
+ for(let i=1;i<=7;i++){const key=dateKeyOffset(todayKey,-i);rows.push(key)}
+ const g=settings.weightLossGoal||{}, start=Number(g.startWeight), target=Number(g.targetWeight);
+ let dailyDeficit=0;
+ if(start>target&&g.startDate&&g.endDate){dailyDeficit=(start-target)*7700/daysBetween(g.startDate,g.endDate)}
+ const height=Number(settings.heightCm), age=ageFromBirthdate(settings.birthDate), latestWeight=events.filter(x=>x.type==="weight").sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp))[0];
+ const w=Number(latestWeight?.value)||start, bmr=calcBMR(w,height,age,settings.sex), tdee=bmr?bmr*(Number(settings.activityFactor)||1.2):null;
+ const baseBudget=tdee!=null?Math.max(0,tdee-dailyDeficit):null;
+ let food=0,budget=0,exercise=0;
+ for(const key of rows){
+   food+=events.filter(x=>x.type==="diet"&&x.timestamp.slice(0,10)===key).reduce((a,x)=>a+(Number(x.totalCalories??((x.calories||0)*(x.quantity||1)))||0),0);
+   exercise+=events.filter(x=>x.type==="exercise"&&x.timestamp.slice(0,10)===key).reduce((a,x)=>a+(Number(x.calories)||0),0);
+   if(baseBudget!=null) budget+=baseBudget;
+ }
+ if(baseBudget!=null) budget+=exercise;
+ const delta=budget-food;
+ const targetDeficit=dailyDeficit*7;
+ return {days:7,food,budget,delta,exercise,targetDeficit,goalCompletion:targetDeficit>0?Math.max(0,Math.min(1,(-delta+targetDeficit)/targetDeficit)):null};
+}
+function weightTrendProjection(events,g){
+ const points=events.filter(x=>x.type==="weight"&&x.value!=null).map(x=>({t:new Date(x.timestamp).getTime(),w:Number(x.value)})).filter(x=>isFinite(x.t)&&isFinite(x.w)).sort((a,b)=>a.t-b.t);
+ if(points.length<3||!g||!(Number(g.targetWeight)>0))return null;
+ const recent=points.slice(-8),t0=recent[0].t;
+ const xs=recent.map(p=>(p.t-t0)/86400000),ys=recent.map(p=>p.w),n=xs.length;
+ const mx=xs.reduce((a,b)=>a+b,0)/n,my=ys.reduce((a,b)=>a+b,0)/n;
+ const den=xs.reduce((a,x)=>a+(x-mx)**2,0);
+ if(!den)return null;
+ const slope=xs.reduce((a,x,i)=>a+(x-mx)*(ys[i]-my),0)/den;
+ const current=recent[recent.length-1].w, target=Number(g.targetWeight);
+ if(!(slope<0)&&current>target)return {current,target,slope,days:null,date:null,points:recent.length};
+ if(current<=target)return {current,target,slope,days:0,date:new Date().toISOString().slice(0,10),points:recent.length};
+ const days=(target-current)/slope;
+ const d=new Date();d.setDate(d.getDate()+Math.ceil(days));
+ return {current,target,slope,days,date:localDateKey(d),points:recent.length};
+}
 function getLocalDateValue(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
 function daysBetween(a,b){return Math.max(1,Math.round((new Date(b+"T00:00:00")-new Date(a+"T00:00:00"))/86400000))}
 function ageFromBirthdate(b){if(!b)return null;const d=new Date(b+"T00:00:00"),n=new Date();let a=n.getFullYear()-d.getFullYear();const m=n.getMonth()-d.getMonth();if(m<0||(m===0&&n.getDate()<d.getDate()))a--;return a}
@@ -243,6 +287,32 @@ async function saveBodyParams(){
  alert("身体参数已保存");
  await render();
 }
+
+
+async function renderWeightProjection(){
+ const el=document.getElementById("weightProjection");if(!el)return;
+ const settings=await getSettings(),events=await all("healthEvents"),g=settings.weightLossGoal||{},p=weightTrendProjection(events,g);
+ if(!p){el.innerHTML=`<div class="muted">至少记录 3 次体重后，会根据最近体重趋势估算预计达成日期。</div>`;return}
+ const weekly=(-p.slope)*7;
+ el.innerHTML=`<div class="projection-grid"><div><span>当前体重</span><b>${p.current.toFixed(1)} kg</b></div><div><span>还需减重</span><b>${Math.max(0,p.current-p.target).toFixed(1)} kg</b></div><div><span>实际速度</span><b>${weekly>0?weekly.toFixed(2):"—"} kg/周</b></div><div><span>预计达成</span><b>${p.date?new Date(p.date+"T00:00:00").toLocaleDateString("zh-CN",{year:"numeric",month:"2-digit",day:"2-digit"}):"暂无法预计"}</b></div></div>`;
+}
+
+async function renderRolling7(){
+ const el=document.getElementById("rolling7Content"); if(!el)return;
+ const settings=await getSettings(),events=await all("healthEvents"),r=rolling7Performance(events,settings);
+ if(r.budget<=0){el.innerHTML=`<div class="muted">记录身体参数和减肥目标后，这里会显示滚动 7 天预算。</div>`;return}
+ const over=r.delta<0,abs=Math.abs(r.delta),pct=r.targetDeficit>0?Math.round(Math.max(0,Math.min(100,(-r.delta)/r.targetDeficit*100))):null;
+ el.innerHTML=`
+ <div class="rolling-grid">
+  <div><span>实际摄入</span><b>${Math.round(r.food).toLocaleString()} kcal</b></div>
+  <div><span>7天预算</span><b>${Math.round(r.budget).toLocaleString()} kcal</b></div>
+  <div><span>运动</span><b>+${Math.round(r.exercise).toLocaleString()} kcal</b></div>
+  <div><span>累计差额</span><b>${over?"−":"+"}${Math.round(abs).toLocaleString()} kcal</b></div>
+ </div>
+ <div class="rolling-status ${over?"good":"warn"}">${over?"🟢 7天低于预算":"🔴 7天超过预算"} ${Math.round(abs).toLocaleString()} kcal</div>
+ ${pct!=null?`<div class="rolling-sub">按目标热量缺口计算：7天目标缺口 ${Math.round(r.targetDeficit).toLocaleString()} kcal · 当前完成约 ${pct}%</div>`:""}`;
+}
+
 async function openGoal(){
  const settings=await getSettings(),events=await all("healthEvents"),latest=events.filter(x=>x.type==="weight").sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp))[0],g=settings.weightLossGoal||{};
  const d=new Date();d.setMonth(d.getMonth()+3);
