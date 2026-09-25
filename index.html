@@ -21,6 +21,7 @@
 
 .rolling-grid,.projection-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:10px 0}.rolling-grid>div,.projection-grid>div{padding:10px;border-radius:12px;background:var(--bg,#f6f7f9);display:flex;flex-direction:column;gap:4px}.rolling-grid span,.projection-grid span,.rolling-sub{font-size:12px;opacity:.65}.rolling-grid b,.projection-grid b{font-size:16px}.rolling-status{padding:11px 12px;border-radius:12px;font-weight:600}.rolling-status.good{background:#eaf7ed}.rolling-status.warn{background:#fff2e6}.rolling-sub{margin-top:8px}
 @media(max-width:420px){.rolling-grid,.projection-grid{gap:7px}.rolling-grid b,.projection-grid b{font-size:14px}}
+.weight-projection-card,.goal-rolling-card{margin-top:12px}.card-title{font-weight:700;margin-bottom:8px}
 </style>
 <title>我的健康</title>
 <meta name="app-version" content="3.6">
@@ -74,10 +75,6 @@ async function exportData(){const o={version:3,exportedAt:new Date().toISOString
 async function importData(file){const x=JSON.parse(await file.text());for(const s of STORES)for(const v of x[s]||[])await put(s,v)}
 async function getSettings(){const rows=await all("settings");return rows.find(x=>x.id==="preferences")||{id:"preferences",heightCm:null,foodCalories:{}}}
 async function saveSettings(patch){const old=await getSettings();const next={...old,...patch,id:"preferences"};await put("settings",next);return next}
-
-
-const __healthRender=render;
-render=async function(){const r=await __healthRender.apply(this,arguments);try{await renderWeightProjection();await renderRolling7()}catch(e){console.error(e)}return r};
 </script>
 <script>
 let page="home",trend="weight";
@@ -122,6 +119,10 @@ async function render(){
  console.error(err);
  m.innerHTML=`<div class="empty"><strong>页面加载失败</strong><br><span class="muted">${esc(err.message||"未知错误")}</span><br><button class="btn" style="margin-top:12px" onclick="location.reload()">重新加载</button></div>`;
 }
+ if(page==="home"){
+  if(typeof renderWeightProjection==="function")await renderWeightProjection();
+  if(typeof renderRolling7==="function")await renderRolling7();
+ }
  if(typeof driveBindUI==='function')driveBindUI();
  if(page==="me"&&typeof driveSilentRestore==='function')driveSilentRestore();
 }
@@ -145,7 +146,10 @@ async function home(){
   goalCard=`<div class="section-title"><h3>🎯 减肥目标</h3><button class="link" onclick="openGoal()">管理</button></div><div class="card goal-card"><div class="goal-head"><div><div class="goal-weight">${Number(g.startWeight).toFixed(1)} <span class="goal-arrow">→</span> ${Number(g.targetWeight).toFixed(1)} kg</div><div class="muted">目标日期 ${g.endDate}</div></div><b>${pct.toFixed(0)}%</b></div><div class="progress"><i style="width:${pct.toFixed(1)}%"></i></div><div class="muted">已减 ${lost.toFixed(1)} kg · 还需 ${Math.max(0,cw-Number(g.targetWeight)).toFixed(1)} kg</div><div class="goal-grid"><div class="goal-stat"><span class="muted">目标每日缺口</span><b>${Math.round(gt.dailyDeficit)} kcal</b></div><div class="goal-stat"><span class="muted">昨日饮食预算</span><b>${budget!=null?Math.round(budget):"—"} kcal</b></div><div class="goal-stat"><span class="muted">昨日已吃</span><b>${Math.round(food)} kcal</b></div><div class="goal-stat"><span class="muted">昨日运动</span><b>+${Math.round(yesterdayEx)} kcal</b></div></div><div class="goal-status ${ok?"goal-good":"goal-warn"}">${ok?"🟢 昨日目标达成":"🟡 昨日目标未达成"}${budget!=null?` · 剩余 ${Math.max(0,Math.round(budget-food))} kcal`:""}</div></div>`;
  }
  return `<section class="hero"><div class="date">${new Intl.DateTimeFormat("zh-CN",{year:"numeric",month:"long",day:"numeric",weekday:"long"}).format(new Date())}</div><h2>今天，照顾好自己。</h2><div class="muted">只记录真正有用的健康信息。</div></section>
- ${goalCard}<div class="section-title"><h3>今日概览</h3></div><div class="grid">${metric("⚖️","体重",w?`${w.value} kg`:"—",w?fmt(w.timestamp):"暂无记录")}${metric("🏃","运动",ex?`${ex.duration} min`:"—",ex?ex.activity:"暂无记录")}${metric("📏","BMI",bmi?bmi.toFixed(1):"—",bmiInfo?`${bmiInfo[0]} · ${bmiInfo[1]}`:(height?"暂无体重":"请在设置中输入身高"))}${metric("🔥","本月运动",`${monthlyExerciseCalories} kcal`,`${now.getMonth()+1}月累计消耗`)}</div>
+ ${goalCard}
+ <div class="card weight-projection-card"><div class="card-title">📈 实际减重进度</div><div id="weightProjection">正在计算…</div></div>
+ <div class="card goal-rolling-card"><div class="card-title">🍽️ 滚动 7 天饮食表现</div><div id="rolling7Content">正在计算…</div></div>
+ <div class="section-title"><h3>今日概览</h3></div><div class="grid">${metric("⚖️","体重",w?`${w.value} kg`:"—",w?fmt(w.timestamp):"暂无记录")}${metric("🏃","运动",ex?`${ex.duration} min`:"—",ex?ex.activity:"暂无记录")}${metric("📏","BMI",bmi?bmi.toFixed(1):"—",bmiInfo?`${bmiInfo[0]} · ${bmiInfo[1]}`:(height?"暂无体重":"请在设置中输入身高"))}${metric("🔥","本月运动",`${monthlyExerciseCalories} kcal`,`${now.getMonth()+1}月累计消耗`)}</div>
  <div class="section-title"><h3>今日饮食</h3><button class="link" data-page="record">添加</button></div>${diet.map(eventRow).join("")||`<div class="empty">今天还没有饮食记录</div>`}
  <div class="section-title"><h3>最近记录</h3><button class="link" data-page="timeline">全部</button></div>${events.slice(0,4).map(eventRow).join("")||`<div class="empty">还没有记录。点击 ＋ 开始。</div>`}`;
 }
