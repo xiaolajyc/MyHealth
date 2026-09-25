@@ -23,9 +23,11 @@
 @media(max-width:420px){.rolling-grid,.projection-grid{gap:7px}.rolling-grid b,.projection-grid b{font-size:14px}}
 .weight-projection-card,.goal-rolling-card{margin-top:12px}.card-title{font-weight:700;margin-bottom:8px}
 .today-diet-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:10px 0}.today-diet-grid>div{padding:10px;border-radius:12px;background:var(--bg,#f6f7f9);display:flex;flex-direction:column;gap:4px}.today-diet-grid span{font-size:12px;opacity:.65}.today-diet-grid b{font-size:16px}
+
+.diet-day{padding:10px 0}.diet-day+.diet-day{border-top:1px solid var(--border,#e5e7eb)}.diet-day-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}.diet-day-status{font-size:13px}.diet-day-status.good{color:#218739}.diet-day-status.bad{color:#c0392b}.diet-day-main{display:flex;justify-content:space-between;gap:10px;align-items:baseline}.diet-day-main strong{font-size:16px}.diet-day-main span{font-size:12px;opacity:.65}.diet-progress{height:6px;background:var(--bg,#f1f3f5);border-radius:99px;overflow:hidden;margin-top:8px}.diet-progress i{display:block;height:100%;background:currentColor;border-radius:99px}.goal-inline-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.goal-inline-grid>div{padding:9px 10px;border-radius:10px;background:var(--bg,#f6f7f9);display:flex;flex-direction:column;gap:3px}.goal-inline-grid span{font-size:11px;opacity:.65}.goal-inline-grid b{font-size:14px}
 </style>
 <title>我的健康</title>
-<meta name="app-version" content="3.7">
+<meta name="app-version" content="3.8">
 </head>
 <body>
 <div id="app">
@@ -122,7 +124,7 @@ async function render(){
 }
  if(page==="home"){
   if(typeof renderTodayDiet==="function")await renderTodayDiet();
-  if(typeof renderWeightProjection==="function")await renderWeightProjection();
+  if(typeof renderGoalProjectionInline==="function")await renderGoalProjectionInline();
   if(typeof renderRolling7==="function")await renderRolling7();
  }
  if(typeof driveBindUI==='function')driveBindUI();
@@ -145,12 +147,12 @@ async function home(){
   const food=events.filter(x=>x.type==="diet"&&x.timestamp.slice(0,10)===ydKey).reduce((a,x)=>a+(Number(x.totalCalories??((x.calories||0)*(x.quantity||1)))||0),0);
   const yesterdayEx=events.filter(x=>x.type==="exercise"&&x.timestamp.slice(0,10)===ydKey).reduce((a,x)=>a+(Number(x.calories)||0),0);
   const base=tdee!=null?Math.max(0,tdee-gt.dailyDeficit):null,budget=base!=null?base+yesterdayEx:null,gap=tdee!=null?tdee+yesterdayEx-food:null,ok=gap!=null&&gap>=gt.dailyDeficit;
-  goalCard=`<div class="section-title"><h3>🎯 减肥目标</h3><button class="link" onclick="openGoal()">管理</button></div><div class="card goal-card"><div class="goal-head"><div><div class="goal-weight">${Number(g.startWeight).toFixed(1)} <span class="goal-arrow">→</span> ${Number(g.targetWeight).toFixed(1)} kg</div><div class="muted">目标日期 ${g.endDate}</div></div><b>${pct.toFixed(0)}%</b></div><div class="progress"><i style="width:${pct.toFixed(1)}%"></i></div><div class="muted">已减 ${lost.toFixed(1)} kg · 还需 ${Math.max(0,cw-Number(g.targetWeight)).toFixed(1)} kg</div><div class="goal-grid"><div class="goal-stat"><span class="muted">目标每日缺口</span><b>${Math.round(gt.dailyDeficit)} kcal</b></div><div class="goal-stat"><span class="muted">昨日饮食预算</span><b>${budget!=null?Math.round(budget):"—"} kcal</b></div><div class="goal-stat"><span class="muted">昨日已吃</span><b>${Math.round(food)} kcal</b></div><div class="goal-stat"><span class="muted">昨日运动</span><b>+${Math.round(yesterdayEx)} kcal</b></div></div><div class="goal-status ${ok?"goal-good":"goal-warn"}">${ok?"🟢 昨日目标达成":"🟡 昨日目标未达成"}${budget!=null?` · 剩余 ${Math.max(0,Math.round(budget-food))} kcal`:""}</div></div>`;
+  goalCard=`<div class="section-title"><h3>🎯 减肥目标</h3><button class="link" onclick="openGoal()">管理</button></div><div class="card goal-card"><div class="goal-head"><div><div class="goal-weight">${Number(g.startWeight).toFixed(1)} <span class="goal-arrow">→</span> ${Number(g.targetWeight).toFixed(1)} kg</div><div class="muted">目标日期 ${g.endDate}</div></div><b>${pct.toFixed(0)}%</b></div><div class="progress"><i style="width:${pct.toFixed(1)}%"></i></div><div class="muted">已减 ${lost.toFixed(1)} kg · 还需 ${Math.max(0,cw-Number(g.targetWeight)).toFixed(1)} kg</div><div class="goal-grid"><div class="goal-stat"><span class="muted">目标每日缺口</span><b>${Math.round(gt.dailyDeficit)} kcal</b></div><div class="goal-stat"><span class="muted">昨日饮食预算</span><b>${budget!=null?Math.round(budget):"—"} kcal</b></div><div class="goal-stat"><span class="muted">昨日已吃</span><b>${Math.round(food)} kcal</b></div><div class="goal-stat"><span class="muted">昨日运动</span><b>+${Math.round(yesterdayEx)} kcal</b></div></div><div class="goal-status ${ok?"goal-good":"goal-warn"}">${ok?"🟢 昨日目标达成":"🟡 昨日目标未达成"}${budget!=null?` · 剩余 ${Math.max(0,Math.round(budget-food))} kcal`:""}</div></div><div id="goalProjectionInline" class="goal-inline-projection"></div>`;
  }
  return `<section class="hero"><div class="date">${new Intl.DateTimeFormat("zh-CN",{year:"numeric",month:"long",day:"numeric",weekday:"long"}).format(new Date())}</div><h2>今天，照顾好自己。</h2><div class="muted">只记录真正有用的健康信息。</div></section>
  ${goalCard}
- <div class="card weight-projection-card"><div class="card-title">📈 实际减重进度</div><div id="weightProjection">正在计算…</div></div>
- <div class="card today-diet-card"><div class="card-title">🍽️ 今日饮食</div><div id="todayDietContent">正在计算…</div></div>
+ <div id="weightProjection">正在计算…</div></div>
+ <div class="card today-diet-card"><div class="card-title">🍽️ 饮食</div><div id="todayDietContent">正在计算…</div></div>
  <div class="card goal-rolling-card"><div class="card-title">🍽️ 滚动 7 天饮食表现</div><div id="rolling7Content">正在计算…</div></div>
  <div class="section-title"><h3>今日概览</h3></div><div class="grid">${metric("⚖️","体重",w?`${w.value} kg`:"—",w?fmt(w.timestamp):"暂无记录")}${metric("🏃","运动",ex?`${ex.duration} min`:"—",ex?ex.activity:"暂无记录")}${metric("📏","BMI",bmi?bmi.toFixed(1):"—",bmiInfo?`${bmiInfo[0]} · ${bmiInfo[1]}`:(height?"暂无体重":"请在设置中输入身高"))}${metric("🔥","本月运动",`${monthlyExerciseCalories} kcal`,`${now.getMonth()+1}月累计消耗`)}</div>
  <div class="section-title"><h3>今日饮食</h3><button class="link" data-page="record">添加</button></div>${diet.map(eventRow).join("")||`<div class="empty">今天还没有饮食记录</div>`}
@@ -237,7 +239,7 @@ async function me(){
  <div class="section-title"><h3>减肥目标</h3></div><div class="settings"><button class="setting" id="manageGoal"><b>🎯 减肥目标</b><span>${settings.weightLossGoal?"已设置 ›":"设置 ›"}</span></button></div>
  <div class="section-title"><h3>☁️ 多设备同步</h3></div><div class="card drive-sync-card"><div id="driveStatus">未连接</div><div class="drive-actions"><button class="btn" id="driveConnect">连接 Google Drive</button><button class="drive-secondary" id="driveDisconnect">断开</button><button class="btn" id="driveUpload">☁️ 上传 / 同步</button><button class="drive-secondary" id="driveDownload">⬇️ 从云端恢复</button></div><label class="drive-auto"><input type="checkbox" id="driveAutoSync"><span>数据修改后自动同步</span></label><div id="driveProgress" class="drive-progress"><div class="drive-track"><div id="driveBar" class="drive-bar"></div></div><div class="drive-progress-text"><span id="driveText">准备同步…</span><span id="drivePct">0%</span></div></div><div class="muted" style="margin-top:10px">健康记录和设置会同步到你的 Google Drive。数据仍保存在本机浏览器。首次连接需要 Google 授权。</div></div>
  <div class="section-title"><h3>数据管理</h3></div><div class="settings"><button class="setting" id="export"><b>📦 导出数据</b><span>JSON ›</span></button><button class="setting" id="import"><b>📥 导入数据</b><span>JSON ›</span></button><input id="fileInput" type="file" accept=".json" hidden></div>
- <div class="section-title"><h3>关于</h3></div><div class="card version-card"><span>我的健康</span><strong>版本 3.7</strong></div>`}
+ <div class="section-title"><h3>关于</h3></div><div class="card version-card"><span>我的健康</span><strong>版本 3.8</strong></div>`}
 
 function kjToKcal(kj){return (Number(kj)||0)/4.184}
 function normalizeDietEnergy(value,unit){const n=Number(value)||0;return unit==="kj"?n/4.184:n}
@@ -298,18 +300,30 @@ async function saveBodyParams(){
 
 async function renderTodayDiet(){
  const el=document.getElementById("todayDietContent");if(!el)return;
- const settings=await getSettings(),events=await all("healthEvents"),today=localDateKey();
- const food=events.filter(x=>x.type==="diet"&&x.timestamp.slice(0,10)===today).reduce((a,x)=>a+(Number(x.totalCalories??((x.calories||0)*(x.quantity||1)))||0),0);
- const ex=events.filter(x=>x.type==="exercise"&&x.timestamp.slice(0,10)===today).reduce((a,x)=>a+(Number(x.calories)||0),0);
+ const settings=await getSettings(),events=await all("healthEvents");
  const g=settings.weightLossGoal||{},w=events.filter(x=>x.type==="weight").sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp))[0];
  const weight=Number(w?.value)||Number(g.startWeight),height=Number(settings.heightCm),age=ageFromBirthdate(settings.birthDate),bmr=calcBMR(weight,height,age,settings.sex),tdee=bmr?bmr*(Number(settings.activityFactor)||1.2):null;
  let deficit=0;if(g.startWeight&&g.targetWeight&&g.startDate&&g.endDate)deficit=(Number(g.startWeight)-Number(g.targetWeight))*7700/daysBetween(g.startDate,g.endDate);
- const base=tdee!=null?Math.max(0,tdee-deficit):null,budget=base!=null?base+ex:null,margin=budget!=null?budget-food:null;
- if(budget==null){el.innerHTML=`<div class="muted">设置身体参数和减肥目标后，这里会显示今日饮食预算。</div>`;return}
- const good=margin>=0;
- el.innerHTML=`<div class="today-diet-grid"><div><span>已吃</span><b>${Math.round(food).toLocaleString()} kcal</b></div><div><span>今日预算</span><b>${Math.round(budget).toLocaleString()} kcal</b></div><div><span>运动加成</span><b>+${Math.round(ex).toLocaleString()} kcal</b></div><div><span>预算余量</span><b>${good?"":"−"}${Math.round(Math.abs(margin)).toLocaleString()} kcal</b></div></div><div class="rolling-status ${good?"good":"warn"}">${good?"🟢 今日预算内":"🔴 今日超过预算"} ${Math.round(Math.abs(margin))} kcal</div>`;
+ const base=tdee!=null?Math.max(0,tdee-deficit):null;
+ if(base==null){el.innerHTML=`<div class="muted">设置身体参数和减肥目标后，这里会显示每日饮食预算。</div>`;return}
+ const calcDay=(key)=>{
+   const food=events.filter(x=>x.type==="diet"&&x.timestamp.slice(0,10)===key).reduce((a,x)=>a+(Number(x.totalCalories??((x.calories||0)*(x.quantity||1)))||0),0);
+   const ex=events.filter(x=>x.type==="exercise"&&x.timestamp.slice(0,10)===key).reduce((a,x)=>a+(Number(x.calories)||0),0);
+   const budget=base+ex,margin=budget-food;
+   return {food,ex,budget,margin};
+ };
+ const today=localDateKey(), yesterday=dateKeyOffset(today,-1),td=calcDay(today),yd=calcDay(yesterday);
+ const renderStatus=(d,label)=>{const good=d.margin>=0;return `<div class="diet-day"><div class="diet-day-head"><b>${label}</b><span class="diet-day-status ${good?"good":"bad"}">${good?"🟢 达标":"🔴 超预算"}</span></div><div class="diet-day-main"><strong>${Math.round(d.food).toLocaleString()} / ${Math.round(d.budget).toLocaleString()} kcal</strong><span>${good?"剩余":"超过"} ${Math.round(Math.abs(d.margin)).toLocaleString()} kcal${d.ex>0?` · 运动 +${Math.round(d.ex)} kcal`:""}</span></div><div class="diet-progress"><i style="width:${Math.min(100,Math.round(d.food/d.budget*100))}%"></i></div></div>`};
+ el.innerHTML=renderStatus(td,"今天")+renderStatus(yd,"昨天");
 }
 
+async function renderGoalProjectionInline(){
+ const el=document.getElementById("goalProjectionInline");if(!el)return;
+ const settings=await getSettings(),events=await all("healthEvents"),g=settings.weightLossGoal||{},p=weightTrendProjection(events,g);
+ if(!p){el.innerHTML=`<div class="muted">至少记录 3 次体重后可估算预计达成日期。</div>`;return}
+ const weekly=(-p.slope)*7;
+ el.innerHTML=`<div class="goal-inline-grid"><div><span>实际速度</span><b>${weekly>0?weekly.toFixed(2):"—"} kg/周</b></div><div><span>预计达成</span><b>${p.date?new Date(p.date+"T00:00:00").toLocaleDateString("zh-CN",{month:"2-digit",day:"2-digit"}):"暂无法预计"}</b></div></div>`;
+}
 async function renderWeightProjection(){
  const el=document.getElementById("weightProjection");if(!el)return;
  const settings=await getSettings(),events=await all("healthEvents"),g=settings.weightLossGoal||{},p=weightTrendProjection(events,g);
