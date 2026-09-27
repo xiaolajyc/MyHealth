@@ -7,7 +7,745 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="我的健康">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180.png?v=4.3">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180.png?v=4.4">
+<link rel="manifest" href="manifest.json">
+<style>
+*{box-sizing:border-box}html,body{margin:0;background:#f6fbfa;color:#17312f;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}body{min-height:100vh}.topbar{height:88px;padding:22px 18px 10px;display:flex;align-items:flex-end;justify-content:space-between;position:sticky;top:0;z-index:10;background:rgba(246,251,250,.95);backdrop-filter:blur(18px)}.eyebrow{font-size:10px;letter-spacing:1.7px;color:#7d9995;font-weight:700}.topbar h1{font-size:27px;margin:5px 0 0}.icon-btn{border:0;background:#fff;width:42px;height:42px;border-radius:14px;box-shadow:0 5px 18px #17433b12;color:#177b70;font-size:25px;cursor:pointer}main{padding:8px 16px 98px;max-width:760px;margin:auto}.hero{background:linear-gradient(135deg,#dff5ef,#edf9f6);border-radius:25px;padding:20px;margin:8px 0 18px}.hero .date{font-size:13px;color:#66827e}.hero h2{font-size:26px;margin:7px 0 4px}.muted{color:#78918d;font-size:13px;line-height:1.5}.section-title{display:flex;justify-content:space-between;align-items:center;margin:22px 2px 10px}.section-title h3{margin:0;font-size:16px}.link{border:0;background:none;color:#17877b;font-weight:700}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}.card{background:#fff;border-radius:19px;padding:15px;box-shadow:0 5px 20px #17433b0b;border:1px solid #e8f0ee}.metric{min-height:116px}.metric .label{font-size:12px;color:#78908c}.metric .value{font-size:24px;font-weight:750;margin:12px 0 4px}.metric .sub{font-size:11px;color:#91a6a2}.row-card{background:#fff;border-radius:18px;padding:14px 15px;display:flex;align-items:center;gap:12px;margin-bottom:9px;box-shadow:0 4px 18px #17433b0a}.row-icon{width:40px;height:40px;border-radius:13px;background:#edf8f5;display:grid;place-items:center;font-size:19px}.row-main{flex:1}.row-main strong{display:block;font-size:14px}.row-main span{display:block;font-size:12px;color:#7c9691;margin-top:4px}.status{font-size:12px;font-weight:700;color:#819994}.status.done{color:#168276}.quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.quick{border:0;background:#fff;border-radius:18px;padding:19px 10px;box-shadow:0 4px 18px #17433b0a;color:#24413e}.quick b{display:block;font-size:25px;margin-bottom:8px;color:#16877a}.quick span{font-size:12px}.bottom-nav{position:fixed;left:0;right:0;bottom:0;height:76px;padding:8px 8px calc(8px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(5,1fr);background:rgba(255,255,255,.97);backdrop-filter:blur(20px);border-top:1px solid #e5eeec;z-index:20}.nav-btn{border:0;background:none;color:#8aa09d;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border-radius:15px}.nav-btn span{font-size:21px}.nav-btn small{font-size:10px}.nav-btn.active{color:#138276;background:#edf8f5}.empty{text-align:center;padding:30px 12px;color:#8aa19d;background:#fff;border-radius:18px}.form{display:grid;gap:13px}.field label{display:block;font-size:12px;color:#6f8985;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;border:1px solid #dce9e6;border-radius:13px;padding:12px;background:#fff;font:inherit;color:#18332f}.field textarea{min-height:80px;resize:vertical}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.actions{display:flex;gap:8px;margin-top:5px}.btn{flex:1;border:0;border-radius:14px;padding:12px;background:#16877a;color:#fff;font-weight:750}.btn.secondary{background:#edf7f4;color:#167b70}.btn.danger{background:#fff0f0;color:#c84d4d}.sheet{position:relative;background:#f8fcfb;border-radius:27px 27px 0 0;padding:18px 17px max(22px,env(safe-area-inset-bottom));max-height:92vh;overflow:auto;z-index:31}.modal{position:fixed;inset:0;z-index:30;display:flex;align-items:flex-end}.modal.hidden{display:none}.backdrop{position:absolute;inset:0;background:#0d29254f}.sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}.sheet-head h2{font-size:21px;margin:0}.tabs{display:flex;gap:7px;overflow:auto;margin:10px 0 16px}.tab{border:0;background:#fff;border-radius:13px;padding:9px 13px;color:#78908c;white-space:nowrap}.tab.active{background:#16877a;color:#fff}.chart{height:200px;background:#fff;border-radius:20px;padding:12px;box-shadow:0 5px 20px #17433b0a}.settings{display:grid;gap:9px}.setting{border:0;background:#fff;border-radius:18px;padding:16px;text-align:left;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 18px #17433b0a;color:#24413e;font:inherit}.setting span{color:#91a6a2}.med-card{background:#fff;border-radius:19px;padding:15px;margin-bottom:10px;box-shadow:0 4px 18px #17433b0a}.med-top{display:flex;justify-content:space-between;gap:10px}.med-top h3{margin:0;font-size:16px}.med-top p{margin:5px 0 0;color:#7b9490;font-size:12px}.pill{display:inline-flex;padding:5px 9px;border-radius:999px;background:#edf8f5;color:#168276;font-size:11px;font-weight:700}.mini-actions{display:flex;gap:7px;margin-top:12px}.mini-actions button{flex:1;border:0;border-radius:11px;padding:9px;background:#edf8f5;color:#177b70;font-weight:700}.search{width:100%;border:1px solid #dce9e6;border-radius:14px;padding:12px;background:#fff;font:inherit;margin-bottom:12px}.timeline-date{font-size:13px;color:#6f8985;margin:18px 3px 9px;font-weight:750}.timeline-item{position:relative;padding-left:25px;margin-bottom:11px}.timeline-item:before{content:"";position:absolute;left:5px;top:7px;width:9px;height:9px;border-radius:50%;background:#16877a;box-shadow:0 0 0 4px #e3f4f0}.timeline-card{background:#fff;border-radius:16px;padding:12px 14px;box-shadow:0 4px 15px #17433b09}.timeline-card .time{font-size:10px;color:#8aa09d}.timeline-card strong{display:block;margin-top:4px;font-size:14px}.timeline-card small{display:block;margin-top:3px;color:#79908c}@media(min-width:650px){.grid{grid-template-columns:repeat(3,1fr)}.quick-grid{grid-template-columns:repeat(4,1fr)}}
+.take-btn{border:0;background:#edf8f5;color:#168276;border-radius:11px;padding:9px 10px;font-size:11px;font-weight:750;white-space:nowrap;cursor:pointer}.take-btn.taken{background:#16877a;color:#fff}
+
+
+
+.delete-btn{border:0;background:transparent;color:#a8b7b4;font-size:18px;line-height:1;cursor:pointer;padding:5px 7px;flex:none}.delete-btn:hover{color:#c04d4d}.timeline-card{position:relative;padding-right:48px}.timeline-delete{position:absolute;right:8px;bottom:8px;font-size:11px}.settings-card{padding:16px}.setting-label{display:block;font-size:13px;font-weight:750;margin-bottom:8px}.height-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}.height-row input{flex:1;min-width:0;border:1px solid #dce9e6;border-radius:14px;padding:12px;background:#fff;font:inherit}.version-card{padding:16px;display:flex;justify-content:space-between;align-items:center}.version-card strong{color:#168276;font-size:13px}.goal-card{position:relative;overflow:hidden}.goal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.goal-weight{font-size:28px;font-weight:800}.goal-arrow{opacity:.45;margin:0 5px}.progress{height:9px;background:#e9edf2;border-radius:99px;overflow:hidden;margin:14px 0 8px}.progress>i{display:block;height:100%;background:#111;border-radius:99px}.goal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.goal-stat{padding:11px;border:1px solid #edf0f3;border-radius:12px;background:#fafbfc}.goal-stat b{display:block;font-size:18px;margin-top:3px}.goal-status{margin-top:12px;padding:12px;border-radius:12px;background:#f5f6f7}.goal-good{background:#edf8ef}.goal-warn{background:#fff7e8}.goal-info{background:#f1f5ff}
+.drive-sync-card{margin-top:14px}.drive-status{font-size:13px;color:#78918d;min-height:20px;margin:7px 0 12px}.drive-status.ok{color:#168276}.drive-status.error{color:#c84d4d}.drive-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.drive-actions button{min-height:45px}.drive-secondary{border:0;border-radius:14px;padding:12px;background:#edf7f4;color:#167b70;font-weight:750}.drive-progress{display:none;margin-top:12px}.drive-progress.show{display:block}.drive-track{height:7px;background:#e6efec;border-radius:99px;overflow:hidden}.drive-bar{height:100%;width:0;background:#16877a;border-radius:99px;transition:width .2s}.drive-progress-text{display:flex;justify-content:space-between;margin-top:5px;font-size:11px;color:#78918d}.drive-auto{display:flex;align-items:center;gap:9px;margin-top:13px;font-size:12px;color:#55706b}.drive-auto input{width:18px;height:18px;accent-color:#16877a}
+.energy-input-row{display:flex;gap:8px;align-items:stretch}.energy-input-row input{flex:1}.energy-input-row select{width:88px;border:1px solid var(--border,#ddd);border-radius:10px;padding:0 8px;background:var(--card,#fff)}
+
+.rolling-grid,.projection-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:10px 0}.rolling-grid>div,.projection-grid>div{padding:10px;border-radius:12px;background:var(--bg,#f6f7f9);display:flex;flex-direction:column;gap:4px}.rolling-grid span,.projection-grid span,.rolling-sub{font-size:12px;opacity:.65}.rolling-grid b,.projection-grid b{font-size:16px}.rolling-status{padding:11px 12px;border-radius:12px;font-weight:600}.rolling-status.good{background:#eaf7ed}.rolling-status.warn{background:#fff2e6}.rolling-sub{margin-top:8px}
+@media(max-width:420px){.rolling-grid,.projection-grid{gap:7px}.rolling-grid b,.projection-grid b{font-size:14px}}
+.weight-projection-card,.goal-rolling-card{margin-top:12px}.card-title{font-weight:700;margin-bottom:8px}
+.today-diet-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:10px 0}.today-diet-grid>div{padding:10px;border-radius:12px;background:var(--bg,#f6f7f9);display:flex;flex-direction:column;gap:4px}.today-diet-grid span{font-size:12px;opacity:.65}.today-diet-grid b{font-size:16px}
+
+.diet-day{padding:10px 0}.diet-day+.diet-day{border-top:1px solid var(--border,#e5e7eb)}.diet-day-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}.diet-day-status{font-size:13px}.diet-day-status.good{color:#218739}.diet-day-status.bad{color:#c0392b}.diet-day-main{display:flex;justify-content:space-between;gap:10px;align-items:baseline}.diet-day-main strong{font-size:16px}.diet-day-main span{font-size:12px;opacity:.65}.diet-progress{height:6px;background:var(--bg,#f1f3f5);border-radius:99px;overflow:hidden;margin-top:8px}.diet-progress i{display:block;height:100%;background:currentColor;border-radius:99px}.goal-inline-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.goal-inline-grid>div{padding:9px 10px;border-radius:10px;background:var(--bg,#f6f7f9);display:flex;flex-direction:column;gap:3px}.goal-inline-grid span{font-size:11px;opacity:.65}.goal-inline-grid b{font-size:14px}
+
+.goal-main-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.goal-main-stats>div,.goal-7-grid>div{padding:9px 10px;border-radius:10px;background:var(--bg,#f6f7f9);display:flex;flex-direction:column;gap:3px}.goal-main-stats span,.goal-7-grid span{font-size:11px;opacity:.65}.goal-main-stats b,.goal-7-grid b{font-size:15px}.goal-progress{height:8px;background:var(--bg,#eceff1);border-radius:99px;overflow:hidden;margin-top:10px}.goal-progress i{display:block;height:100%;background:currentColor;border-radius:99px}.goal-progress-label{font-size:12px;text-align:right;opacity:.65;margin-top:4px}.goal-divider{height:1px;background:var(--border,#e5e7eb);margin:12px 0}.goal-section-title{font-weight:700;margin-bottom:4px}.goal-day{padding:7px 0}.goal-day+.goal-day{border-top:1px solid var(--border,#eee)}.goal-day-head{display:flex;justify-content:space-between;margin-bottom:3px}.good-text{color:#218739}.bad-text{color:#c0392b}.goal-7-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:7px 0}.rolling-status{padding:9px 10px;border-radius:10px;font-size:13px}.rolling-status.good{background:#eaf7ed}.rolling-status.warn{background:#fff2e6}
+
+/* V4.0 home dashboard */
+.home-shell .topbar{display:none}
+.home-shell main{padding:16px 16px 104px;max-width:760px}
+.home-hero{position:relative;min-height:226px;overflow:hidden;border-radius:26px;padding:23px 22px 20px;background:linear-gradient(135deg,#e6f5ff 0%,#edf8f6 55%,#dcefe9 100%);box-shadow:0 8px 26px rgba(30,80,90,.08);margin-bottom:16px}
+.home-hero-copy{position:relative;z-index:2}
+.home-greeting{font-size:26px;font-weight:800;color:#10285a;letter-spacing:-.5px}
+.home-date{font-size:14px;color:#60708c;margin-top:7px}
+.home-weight{font-size:56px;line-height:1;font-weight:850;color:#10285a;margin-top:23px;letter-spacing:-2px}
+.home-weight span{font-size:25px;letter-spacing:0}
+.home-bmi{font-size:25px;font-weight:700;color:#14224d;margin-top:9px}.home-bmi span{opacity:.4;margin:0 4px}.home-bmi b{color:#17965d}
+.home-bmi-range{font-size:13px;color:#61708a;margin-top:2px}
+.home-hero-art{position:absolute;right:-20px;bottom:-34px;width:62%;height:78%;opacity:.6;background:
+ radial-gradient(circle at 74% 20%,rgba(255,255,255,.9) 0 9%,transparent 10%),
+ linear-gradient(166deg,transparent 0 31%,rgba(127,190,224,.35) 32% 48%,transparent 49%),
+ linear-gradient(177deg,transparent 0 49%,rgba(92,167,147,.26) 50% 67%,transparent 68%),
+ linear-gradient(178deg,transparent 0 62%,rgba(61,137,113,.22) 63% 78%,transparent 79%);
+ filter:blur(.1px)
+}
+.home-card{background:rgba(255,255,255,.97);border:1px solid #e9eef1;border-radius:24px;padding:18px 20px;margin-bottom:15px;box-shadow:0 7px 25px rgba(24,52,70,.065)}
+.dashboard-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.dashboard-head>div{display:flex;align-items:center;gap:9px}.dashboard-head h2{font-size:20px;margin:0;color:#13234b}.dashboard-icon{font-size:23px}.dashboard-action{border:0;background:none;color:#64718a;font-size:14px;font-weight:650;padding:4px}
+.goal-target-line{display:flex;align-items:baseline;gap:10px;color:#10285a;font-size:34px;font-weight:850;letter-spacing:-1px}.goal-target-line span{font-size:25px;color:#8d9bb0}.goal-target-line strong:last-child{margin-left:-2px}
+.goal-main-progress{height:12px;border-radius:99px;background:#e8edf2;overflow:hidden;margin:14px 45px 0 0}.goal-main-progress i{display:block;height:100%;background:#37bf83;border-radius:99px}.goal-main-percent{float:right;margin-top:-19px;font-size:17px;font-weight:800;color:#10285a}
+.goal-two-stats{display:grid;grid-template-columns:1fr 1fr;margin-top:19px}.goal-two-stats>div+div{border-left:1px solid #e5e9ef;padding-left:28px}.goal-two-stats span,.goal-speed-grid span,.seven-stats span,.diet-bottom span{display:block;color:#718097;font-size:12px}.goal-two-stats b{display:block;color:#10285a;font-size:24px;margin-top:4px}
+.goal-speed-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px;margin-top:18px;padding-top:14px;border-top:1px solid #e8ebef}.goal-speed-grid b{display:block;color:#14244f;font-size:16px;margin-top:3px}.goal-ahead{margin-top:12px;padding:9px 11px;border-radius:12px;font-size:13px;font-weight:700}.goal-ahead.good{background:#edf9ee;color:#149158}.goal-ahead.warn{background:#fff1e8;color:#c55a28}
+.goal-empty{padding:10px 0;color:#718097}.goal-empty .btn{display:block;margin-top:10px;max-width:180px}
+.diet-main-line{display:flex;align-items:baseline;justify-content:space-between;color:#13244e}.diet-main-line strong{font-size:28px;letter-spacing:-.5px}.diet-main-line strong small{font-size:15px}.diet-main-line>b{font-size:16px}
+.diet-progress{height:12px;border-radius:99px;background:#e6edf2;overflow:hidden;margin:10px 0 15px}.diet-progress i{display:block;height:100%;border-radius:99px;background:#42a6f5}.diet-progress.purple i{background:#a383f3}
+.diet-bottom{display:grid;grid-template-columns:1fr 1fr 1.25fr;align-items:center}.diet-bottom>div+div{border-left:1px solid #e5e9ef;padding-left:16px}.diet-bottom b{display:block;font-size:19px;margin-top:3px}.good-text{color:#15965c}.bad-text{color:#c94e42}.blue-text{color:#2687ed}
+.diet-status{justify-self:end;padding:10px 13px;border-radius:14px;font-size:13px;font-weight:750}.diet-status.good{background:#edf9ee;color:#15965c}.diet-status.bad{background:#fff0ed;color:#c94e42}.diet-status.neutral{background:#f0f3f5;color:#6d7b88}
+.yesterday-row{display:grid;grid-template-columns:45px 1fr auto;align-items:center;gap:8px;border-top:1px solid #e8ebef;margin-top:14px;padding-top:12px;font-size:12px;color:#718097}.yesterday-row strong{color:#263554;font-size:13px}.yesterday-row b{font-size:12px}
+.seven-layout{display:grid;grid-template-columns:1.45fr .8fr;gap:20px}.seven-stats{display:grid;grid-template-columns:1fr 1fr;margin-top:13px}.seven-stats>div+div{border-left:1px solid #e5e9ef;padding-left:18px}.seven-stats b{display:block;font-size:19px;margin-top:3px}
+.weight-trend-box{border-left:1px solid #e4e9ef;padding-left:20px;color:#64718a}.weight-trend-box>span{font-size:12px}.weight-trend-box>strong{display:block;font-size:25px;margin:5px 0 3px}.weight-spark{width:100%;height:72px;display:block;color:#24a7a8}.spark-empty{font-size:11px;color:#8996a8;padding:22px 0}.spark-labels{display:flex;justify-content:space-between;font-size:10px;color:#748096}
+.record-summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0}.record-summary-grid button{border:0;background:none;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:9px;text-align:left;padding:4px 8px;color:#1d3157}.record-summary-grid button+button{border-left:1px solid #e4e9ef}.record-summary-grid b{display:block;font-size:14px}.record-summary-grid small{display:block;font-size:11px;color:#718097;margin-top:3px;white-space:nowrap}.record-summary-grid em{font-style:normal;font-size:25px;color:#77869a}.record-circle{width:43px;height:43px;border-radius:50%;display:grid;place-items:center;font-size:21px}.record-circle.exercise{background:#fff1df}.record-circle.diet{background:#eaf2ff}.record-circle.weight{background:#edf0ff}
+@media(max-width:520px){.home-greeting{font-size:24px}.home-weight{font-size:52px}.home-hero{min-height:218px}.home-card{padding:16px}.goal-target-line{font-size:30px}.goal-speed-grid{gap:11px}.seven-layout{grid-template-columns:1fr}.weight-trend-box{border-left:0;border-top:1px solid #e4e9ef;padding:14px 0 0}.record-summary-grid{grid-template-columns:1fr}.record-summary-grid button{padding:8px 2px}.record-summary-grid button+button{border-left:0;border-top:1px solid #e4e9ef}.diet-bottom{grid-template-columns:1fr 1fr}.diet-status{grid-column:1/-1;justify-self:stretch;text-align:center;margin-top:10px}.yesterday-row{grid-template-columns:42px 1fr;}.yesterday-row b{grid-column:2}}
+
+
+.theory-weight-box{margin-top:14px;padding:13px 14px;border-radius:15px;background:linear-gradient(135deg,#f4f8ff,#f3faf8);border:1px solid #e2ebed}
+.theory-weight-head{display:flex;justify-content:space-between;align-items:center}.theory-weight-head span{font-size:13px;color:#64718a;font-weight:700}.theory-weight-head b{font-size:22px;color:#10285a}
+.theory-weight-row{display:flex;justify-content:space-between;align-items:center;margin-top:7px;padding-top:7px;border-top:1px solid rgba(100,120,140,.14);font-size:12px;color:#718097}.theory-weight-row strong{font-size:15px}
+.theory-weight-box small{display:block;margin-top:6px;font-size:10px;color:#8995a5}
+
+
+.weight-chart{width:100%;margin-top:5px;overflow:hidden}.weight-chart svg{width:100%;height:128px;display:block;color:#24a7a8;overflow:visible}
+.weight-chart text{font-family:inherit}.weight-chart-value{font-size:10px;font-weight:750;fill:#24385b}.weight-chart-date{font-size:9px;fill:#748096}
+
+
+#foodSelect{font-weight:650}.field .btn.secondary#saveFoodPreset{width:100%;margin-top:2px}.muted{line-height:1.35}
+
+
+/* V4.4: unified record input sizing */
+.record-page input:not([type="checkbox"]):not([type="radio"]),
+.record-page select,
+.record-page textarea,
+.record-page .energy-input-row input,
+.record-page .energy-input-row select{
+  width:100%;min-height:48px;height:48px;box-sizing:border-box;font-size:16px;
+}
+.record-page .field{margin-bottom:14px}
+.record-page .energy-input-row{display:grid;grid-template-columns:minmax(0,1fr) 105px;gap:8px}
+.weight-data-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 14px;margin-top:8px;padding-top:8px;border-top:1px solid #e7ebef}
+.weight-data-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#748096;padding:3px 0}
+.weight-data-row strong{font-size:13px;color:#24385b}
+html,body,#app{touch-action:pan-x pan-y;overscroll-behavior-x:none}
+button,a,select,input,textarea{touch-action:manipulation}
+
+</style>
+<title>我的健康</title>
+<meta name="app-version" content="4.4">
+</head>
+<body>
+<div id="app">
+<header class="topbar">
+  <div><div class="eyebrow">MY HEALTH</div><h1 id="pageTitle">首页</h1></div>
+  <button class="icon-btn" id="topAdd">＋</button>
+</header>
+<main id="main"></main>
+<nav class="bottom-nav">
+  <button class="nav-btn active" data-page="home"><span>⌂</span><small>首页</small></button>
+  <button class="nav-btn" data-page="record"><span>＋</span><small>记录</small></button>
+  <button class="nav-btn" data-page="trends"><span>⌁</span><small>趋势</small></button>
+  <button class="nav-btn" data-page="timeline"><span>☷</span><small>时间轴</small></button>
+  <button class="nav-btn" data-page="me"><span>◉</span><small>设置</small></button>
+</nav>
+</div>
+<div id="modal" class="modal hidden">
+ <div class="backdrop"></div>
+ <section class="sheet"><div class="sheet-head"><h2 id="modalTitle"></h2><button class="icon-btn" data-close>×</button></div><div id="modalBody"></div></section>
+</div>
+<script>
+const DB="myHealthSimple",VER=3,STORES=["healthEvents","settings"];
+let dbp;
+function openDB(){
+  if(dbp)return dbp;
+  dbp=new Promise((resolve,reject)=>{
+    const r=indexedDB.open(DB,VER);
+    r.onupgradeneeded=e=>{
+      const d=e.target.result;
+      // Keep only the stores used by the current simple health app.
+      ["medications","medicationLogs","supplements","supplementLogs"].forEach(s=>{
+        if(d.objectStoreNames.contains(s)) d.deleteObjectStore(s);
+      });
+      STORES.forEach(s=>{if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:"id"})});
+    };
+    r.onsuccess=()=>resolve(r.result);
+    r.onerror=()=>reject(r.error);
+    r.onblocked=()=>console.warn("IndexedDB upgrade is blocked by another tab");
+  });
+  return dbp;
+}
+const uid=()=>crypto.randomUUID?crypto.randomUUID():Date.now()+"-"+Math.random();
+async function put(s,v){const d=await openDB();return new Promise((ok,no)=>{const t=d.transaction(s,"readwrite");t.objectStore(s).put(v);t.oncomplete=()=>{ok();if(typeof driveMarkLocalChange==='function')driveMarkLocalChange()};t.onerror=()=>no(t.error)})}
+async function all(s){const d=await openDB();if(!d.objectStoreNames.contains(s))return [];return new Promise((ok,no)=>{const r=d.transaction(s).objectStore(s).getAll();r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
+async function del(s,id){const d=await openDB();return new Promise((ok,no)=>{const t=d.transaction(s,"readwrite");t.objectStore(s).delete(id);t.oncomplete=()=>{ok();if(typeof driveMarkLocalChange==='function')driveMarkLocalChange()};t.onerror=()=>no(t.error)})}
+function today(){const d=new Date(),p=n=>String(n).padStart(2,"0");return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`}
+async function exportData(){const o={version:3,exportedAt:new Date().toISOString()};for(const s of STORES)o[s]=await all(s);const b=new Blob([JSON.stringify(o,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=`my-health-${today()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+async function importData(file){const x=JSON.parse(await file.text());for(const s of STORES)for(const v of x[s]||[])await put(s,v)}
+async function getSettings(){const rows=await all("settings");return rows.find(x=>x.id==="preferences")||{id:"preferences",heightCm:null,foodCalories:{}}}
+async function saveSettings(patch){const old=await getSettings();const next={...old,...patch,id:"preferences"};await put("settings",next);return next}
+</script>
+<script>
+let page="home",trend="weight";
+const titles={home:"首页",record:"记录",trends:"趋势",timeline:"时间轴",me:"设置"};
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+const fmt=d=>new Intl.DateTimeFormat("zh-CN",{month:"short",day:"numeric",weekday:"short"}).format(new Date(d));
+function localDate(){const d=new Date(),p=n=>String(n).padStart(2,"0");return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`}
+function localTime(){const d=new Date(),p=n=>String(n).padStart(2,"0");return `${p(d.getHours())}:${p(d.getMinutes())}`}
+function localISO(date,time){return `${date}T${time}:00`}
+
+document.addEventListener("click",async e=>{
+ const p=e.target.closest("[data-page]");if(p){page=p.dataset.page;render();return}
+ if(e.target.closest("#topAdd")){page="record";render();return}
+ if(e.target.closest("[data-close]")){closeModal();return}
+ const q=e.target.closest("[data-quick]");if(q){await openRecord(q.dataset.quick);return;}
+
+ const remove=e.target.closest("[data-delete]");if(remove){e.preventDefault();e.stopPropagation();if(confirm("确定删除这条记录吗？")){await del(remove.dataset.store,remove.dataset.delete);render()}return}
+ if(e.target.closest("#driveConnect")){await driveConnect();return}
+ if(e.target.closest("#driveDisconnect")){driveDisconnect();return}
+ if(e.target.closest("#driveUpload")){await driveUpload(true,true);return}
+ if(e.target.closest("#driveDownload")){await driveDownload();return}
+ if(e.target.closest("#saveBodyParams")){await saveBodyParams();return}
+ if(e.target.closest("#manageGoal")){await openGoal();return}
+ if(e.target.closest("#saveHeight")){const v=Number(document.getElementById("heightInput").value);if(v>=50&&v<=250){await saveSettings({heightCm:v});render()}return}
+ if(e.target.closest("#export"))await exportData();
+ if(e.target.closest("#import"))document.getElementById("fileInput").click();
+ const tr=e.target.closest("[data-trend]");if(tr){trend=tr.dataset.trend;render()}
+});
+document.addEventListener("change",async e=>{if(e.target.id==="fileInput"){await importData(e.target.files[0]);render()}});
+
+async function render(){
+ document.getElementById("pageTitle").textContent=titles[page];
+ document.getElementById("app").classList.toggle("home-shell",page==="home");
+ document.querySelectorAll(".nav-btn").forEach(x=>x.classList.toggle("active",x.dataset.page===page));
+ const m=document.getElementById("main");
+ try {
+ if(page==="home")m.innerHTML=await home();
+ else if(page==="record")m.innerHTML=recordPage();
+ else if(page==="trends")m.innerHTML=await trendsPage();
+ else if(page==="timeline")m.innerHTML=await timeline();
+ else if(page==="me")m.innerHTML=await me();
+} catch(err) {
+ console.error(err);
+ m.innerHTML=`<div class="empty"><strong>页面加载失败</strong><br><span class="muted">${esc(err.message||"未知错误")}</span><br><button class="btn" style="margin-top:12px" onclick="location.reload()">重新加载</button></div>`;
+}
+
+ if(typeof driveBindUI==='function')driveBindUI();
+ if(page==="me"&&typeof driveSilentRestore==='function')driveSilentRestore();
+}
+async function home(){
+ const events=(await all("healthEvents")).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+ const settings=await getSettings(),g=settings.weightLossGoal||null;
+ const weights=events.filter(x=>x.type==="weight").sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp));
+ const w=weights[weights.length-1]||null;
+ const height=Number(settings.heightCm)||0;
+ const weight=Number(w?.value)||Number(g?.startWeight)||0;
+ const bmi=weight&&height?weight/(height/100)**2:null;
+ const bmiInfo=(()=>{if(bmi==null)return null;const h=height/100;if(bmi<18.5)return["偏低",`< 18.5 · 体重 < ${(18.5*h*h).toFixed(1)} kg`];if(bmi<25)return["正常",`18.5–24.9 · ${(18.5*h*h).toFixed(1)}–${(25*h*h).toFixed(1)} kg`];if(bmi<30)return["偏高",`25.0–29.9 · ${(25*h*h).toFixed(1)}–${(30*h*h).toFixed(1)} kg`];return["肥胖",`≥ 30.0 · 体重 ≥ ${(30*h*h).toFixed(1)} kg`]})();
+ const todayKey=localDate(),yesterdayKey=dateKeyOffset(todayKey,-1);
+ const dayData=key=>{
+   const diets=events.filter(x=>x.type==="diet"&&x.timestamp.slice(0,10)===key);
+   const exs=events.filter(x=>x.type==="exercise"&&x.timestamp.slice(0,10)===key);
+   const food=diets.reduce((a,x)=>a+(Number(x.totalCalories??((x.calories||0)*(x.quantity||1)))||0),0);
+   const ex=exs.reduce((a,x)=>a+(Number(x.calories)||0),0);
+   const mins=exs.reduce((a,x)=>a+(Number(x.duration)||0),0);
+   return {food,ex,mins,count:diets.length};
+ };
+ const td=dayData(todayKey),yd=dayData(yesterdayKey);
+
+ let baseBudget=null,dailyDeficit=0,targetWeekly=0,goalProgress=0,lost=0,remaining=0,actualWeekly=null,projection=null;
+ if(g&&Number(g.startWeight)>0&&Number(g.targetWeight)>0&&g.startDate&&g.endDate){
+   const gt=calcGoalTarget(g.startDate,g.endDate,Number(g.startWeight),Number(g.targetWeight));
+   dailyDeficit=gt.dailyDeficit;targetWeekly=gt.weekly;
+   lost=Math.max(0,Number(g.startWeight)-weight);
+   remaining=Math.max(0,weight-Number(g.targetWeight));
+   goalProgress=gt.loss>0?Math.min(100,Math.max(0,lost/gt.loss*100)):0;
+   const age=ageFromBirthdate(settings.birthDate),bmr=calcBMR(weight,height,age,settings.sex);
+   const tdee=bmr?bmr*(Number(settings.activityFactor)||1.2):null;
+   baseBudget=tdee!=null?Math.max(0,tdee-dailyDeficit):null;
+   projection=weightTrendProjection(events,g);
+   if(projection&&projection.slope<0)actualWeekly=-projection.slope*7;
+ }
+ const todayBudget=baseBudget!=null?baseBudget+td.ex:null;
+ const todayMargin=todayBudget!=null?todayBudget-td.food:null;
+ const todayPct=todayBudget>0?Math.min(100,td.food/todayBudget*100):0;
+
+ const rows=[];
+ for(let i=1;i<=7;i++)rows.push(dateKeyOffset(todayKey,-i));
+ let sevenFood=0,sevenExercise=0;
+ for(const key of rows){const d=dayData(key);sevenFood+=d.food;sevenExercise+=d.ex}
+ const sevenBudget=baseBudget!=null?baseBudget*7+sevenExercise:null;
+ const sevenMargin=sevenBudget!=null?sevenBudget-sevenFood:null;
+ const targetSevenDeficit=dailyDeficit*7;
+ const actualSevenDeficit=sevenMargin!=null?Math.max(0,sevenMargin):null;
+ const completion=targetSevenDeficit>0?Math.min(100,Math.max(0,actualSevenDeficit/targetSevenDeficit*100)):null;
+ const sevenPct=sevenBudget>0?Math.min(100,sevenFood/sevenBudget*100):0;
+
+ const sevenWeights=weights.filter(x=>x.timestamp.slice(0,10)>=dateKeyOffset(todayKey,-7));
+ let weightTrend=null;
+ if(sevenWeights.length>=2){
+   const first=Number(sevenWeights[0].value),last=Number(sevenWeights[sevenWeights.length-1].value);
+   weightTrend=last-first;
+ }
+ const fmtDate=d=>d?new Date(d+"T00:00:00").toLocaleDateString("zh-CN",{month:"numeric",day:"numeric"}):"—";
+ const goalDate=g?.endDate?fmtDate(g.endDate):"—";
+ const projectedDate=projection?.date?fmtDate(projection.date):"—";
+ const aheadDays=(projection?.date&&g?.endDate)?Math.round((new Date(g.endDate+"T00:00:00")-new Date(projection.date+"T00:00:00"))/86400000):null;
+
+ // 理论体重：以历史上第一次称重为固定基准，只累计有饮食记录的完整日期。
+ // 每天使用“截至当天最后一次已知体重”计算 BMR/TDEE，避免后来的体重反向影响过去。
+ const firstWeight=weights[0]||null;
+ let theoreticalWeight=null,theoreticalLoss=0,theoryDays=0,theoryStartDate=null,theoryLastDate=null;
+ if(firstWeight&&height>0&&settings.birthDate){
+   theoreticalWeight=Number(firstWeight.value);
+   theoreticalStartDate=firstWeight.timestamp.slice(0,10);
+   const startMs=new Date(theoreticalStartDate+"T00:00:00").getTime();
+   const todayMs=new Date(todayKey+"T00:00:00").getTime();
+   let carryWeight=Number(firstWeight.value);
+   let wi=0;
+   const eligibleDays=[];
+   for(let ms=startMs;ms<=todayMs;ms+=86400000){
+     const key=new Date(ms).toISOString().slice(0,10);
+     while(wi+1<weights.length && weights[wi+1].timestamp.slice(0,10)<=key){
+       wi++;
+       carryWeight=Number(weights[wi].value);
+     }
+     const diets=events.filter(x=>x.type==="diet"&&x.timestamp.slice(0,10)===key);
+     if(!diets.length)continue;
+     const exs=events.filter(x=>x.type==="exercise"&&x.timestamp.slice(0,10)===key);
+     const food=diets.reduce((a,x)=>a+(Number(x.totalCalories??((x.calories||0)*(x.quantity||1)))||0),0);
+     const ex=exs.reduce((a,x)=>a+(Number(x.calories)||0),0);
+     const age=ageFromBirthdate(settings.birthDate);
+     const bmrDay=calcBMR(carryWeight,height,age,settings.sex);
+     const tdeeDay=bmrDay?bmrDay*(Number(settings.activityFactor)||1.2):null;
+     if(tdeeDay==null)continue;
+     const deficit=tdeeDay+ex-food;
+     theoreticalLoss+=deficit/7700;
+     theoryDays++;
+     theoryLastDate=key;
+   }
+   theoreticalWeight=Number(firstWeight.value)-theoreticalLoss;
+ }
+ const theoreticalGap=theoreticalWeight!=null?weight-theoreticalWeight:null;
+ const theoreticalText=theoreticalWeight!=null?`${theoreticalWeight.toFixed(1)} kg`:"—";
+ const theoreticalGapText=theoreticalGap==null?"—":`${theoreticalGap>=0?"+":""}${theoreticalGap.toFixed(1)} kg`;
+ const theoreticalSub=theoryDays?`基于 ${theoryDays} 天饮食记录 · 7,700 kcal ≈ 1 kg`:`第一次称重后还没有饮食记录`;
+
+ const todayStatus=todayMargin==null?"需设置目标":todayMargin>=0?"🟢 今日预算内":"🔴 今日超预算";
+ const yesterdayBudget=baseBudget!=null?baseBudget+yd.ex:null;
+ const yesterdayMargin=yesterdayBudget!=null?yesterdayBudget-yd.food:null;
+ const yesterdayStatus=yesterdayMargin==null?"—":yesterdayMargin>=0?"🟢 达标":"🔴 超预算";
+
+ const spark=(()=>{
+   const pts=sevenWeights.slice(-7).map(x=>({
+     date:x.timestamp.slice(0,10),
+     label:new Date(x.timestamp.slice(0,10)+"T00:00:00").toLocaleDateString("zh-CN",{month:"numeric",day:"numeric"}),
+     w:Number(x.value)
+   }));
+   if(pts.length<2)return `<div class="spark-empty">记录更多体重后显示趋势</div>`;
+   const min=Math.min(...pts.map(p=>p.w)),max=Math.max(...pts.map(p=>p.w)),range=Math.max(.1,max-min);
+   const W=420,H=150,L=18,R=18,T=28,B=28;
+   const px=i=>L+(i/(pts.length-1))*(W-L-R);
+   const py=p=>T+((max-p.w)/range)*(H-T-B);
+   const poly=pts.map((p,i)=>`${px(i)},${py(p)}`).join(" ");
+   return `<div class="weight-chart">
+     <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" class="weight-spark">
+       <polyline points="${poly}" fill="none" stroke="currentColor" stroke-width="2.5" vector-effect="non-scaling-stroke"/>
+       ${pts.map((p,i)=>`<g><circle cx="${px(i)}" cy="${py(p)}" r="3" fill="currentColor"/>
+         <text x="${px(i)}" y="${Math.max(13,py(p)-10)}" text-anchor="${i===0?"start":i===pts.length-1?"end":"middle"}" class="weight-chart-value">${p.w.toFixed(1)} kg</text>
+         <text x="${px(i)}" y="${H-8}" text-anchor="${i===0?"start":i===pts.length-1?"end":"middle"}" class="weight-chart-date">${p.label}</text>
+       </g>`).join("")}
+     </svg>
+   </div>`;
+ })();
+
+ return `
+ <section class="home-hero">
+   <div class="home-hero-copy">
+     <div class="home-greeting">Good morning 👋</div>
+     <div class="home-date">${new Intl.DateTimeFormat("zh-CN",{month:"long",day:"numeric",weekday:"long"}).format(new Date())}</div>
+     <div class="home-weight">${weight?weight.toFixed(1):"—"} <span>kg</span></div>
+     <div class="home-bmi">BMI ${bmi!=null?bmi.toFixed(1):"—"} <span>·</span> <b>${bmiInfo?bmiInfo[0]:"未设置"}</b></div>
+     <div class="home-bmi-range">${bmiInfo?`(${bmiInfo[1]})`:"在设置中输入身高后显示 BMI 区间"}</div>
+   </div>
+   <div class="home-hero-art"></div>
+ </section>
+
+ <section class="home-card goal-dashboard">
+   <div class="dashboard-head"><div><span class="dashboard-icon">🎯</span><h2>减肥目标</h2></div><button class="dashboard-action" onclick="openGoal()">管理 ›</button></div>
+   ${g?`
+   <div class="goal-target-line"><strong>${Number(g.startWeight).toFixed(1)}</strong><span>→</span><strong>${Number(g.targetWeight).toFixed(1)} kg</strong></div>
+   <div class="goal-main-progress"><i style="width:${goalProgress.toFixed(1)}%"></i></div>
+   <div class="goal-main-percent">${goalProgress.toFixed(0)}%</div>
+   <div class="goal-two-stats"><div><span>已减</span><b>${lost.toFixed(1)} kg</b></div><div><span>还需</span><b>${remaining.toFixed(1)} kg</b></div></div>
+   <div class="goal-speed-grid">
+     <div><span>实际减重速度</span><b>${actualWeekly!=null?actualWeekly.toFixed(2):"—"} kg/周</b></div>
+     <div><span>目标减重速度</span><b>${targetWeekly.toFixed(2)} kg/周</b></div>
+     <div><span>预计达成日期</span><b>${projectedDate}</b></div>
+     <div><span>目标日期</span><b>${goalDate}</b></div>
+   </div>
+   ${aheadDays!=null?`<div class="goal-ahead ${aheadDays>=0?"good":"warn"}">${aheadDays>=0?`预计比目标提前 ${aheadDays} 天`:`预计比目标晚 ${Math.abs(aheadDays)} 天`}</div>`:""}
+   <div class="theory-weight-box">
+     <div class="theory-weight-head"><span>📐 理论体重</span><b>${theoreticalText}</b></div>
+     <div class="theory-weight-row"><span>实际体重与理论值</span><strong class="${theoreticalGap!=null&&theoreticalGap<=0?"good-text":"bad-text"}">${theoreticalGapText}</strong></div>
+     <small>${theoreticalSub}</small>
+   </div>
+   `:`<div class="goal-empty">还没有设置减肥目标<button class="btn" onclick="openGoal()">设置目标</button></div>`}
+ </section>
+
+ <section class="home-card today-diet-dashboard">
+   <div class="dashboard-head"><div><span class="dashboard-icon">🍽️</span><h2>今日饮食</h2></div><button class="dashboard-action" data-page="record">添加 ›</button></div>
+   <div class="diet-main-line"><strong>${todayBudget!=null?`${Math.round(td.food).toLocaleString()} / ${Math.round(todayBudget).toLocaleString()}`:"—"} <small>kcal</small></strong>${todayBudget!=null?`<b>${Math.round(todayPct)}%</b>`:""}</div>
+   <div class="diet-progress"><i style="width:${todayPct}%"></i></div>
+   <div class="diet-bottom">
+     <div><span>${todayMargin!=null&&todayMargin>=0?"剩余":"超过"}</span><b class="${todayMargin!=null&&todayMargin>=0?"good-text":"bad-text"}">${todayMargin!=null?Math.round(Math.abs(todayMargin)).toLocaleString():"—"} kcal</b></div>
+     <div><span>运动加成</span><b class="blue-text">+${Math.round(td.ex)} kcal</b></div>
+     <div class="diet-status ${todayMargin==null?"neutral":todayMargin>=0?"good":"bad"}">${todayStatus}</div>
+   </div>
+   <div class="yesterday-row"><span>昨天</span><strong>${yesterdayBudget!=null?`${Math.round(yd.food).toLocaleString()} / ${Math.round(yesterdayBudget).toLocaleString()} kcal`:"—"}</strong><b class="${yesterdayMargin!=null&&yesterdayMargin>=0?"good-text":"bad-text"}">${yesterdayStatus}</b></div>
+ </section>
+
+ <section class="home-card seven-dashboard">
+   <div class="dashboard-head"><div><span class="dashboard-icon">📊</span><h2>最近 7 天</h2></div><button class="dashboard-action" data-page="trends">查看 ›</button></div>
+   <div class="seven-layout">
+     <div class="seven-main">
+       <div class="diet-main-line"><strong>${sevenBudget!=null?`${Math.round(sevenFood).toLocaleString()} / ${Math.round(sevenBudget).toLocaleString()}`:"—"} <small>kcal</small></strong>${sevenBudget!=null?`<b>${Math.round(sevenPct)}%</b>`:""}</div>
+       <div class="diet-progress purple"><i style="width:${sevenPct}%"></i></div>
+       <div class="seven-stats"><div><span>预算余量</span><b class="${sevenMargin!=null&&sevenMargin>=0?"good-text":"bad-text"}">${sevenMargin!=null?`${sevenMargin<0?"−":""}${Math.round(Math.abs(sevenMargin)).toLocaleString()} kcal`:"—"}</b></div><div><span>目标缺口完成率</span><b class="blue-text">${completion!=null?Math.round(completion)+"%":"—"}</b></div></div>
+     </div>
+     <div class="weight-trend-box"><span>体重趋势（7天）</span><strong class="${weightTrend!=null&&weightTrend<=0?"good-text":"bad-text"}">${weightTrend==null?"—":(weightTrend<=0?"↓ ":"↑ ")+Math.abs(weightTrend).toFixed(1)+" kg"}</strong>${spark}<div class="spark-labels"><span>7 天前</span><span>最新</span></div></div>
+   </div>
+ </section>
+
+ <section class="home-card records-dashboard">
+   <div class="dashboard-head"><div><span class="dashboard-icon">📋</span><h2>今日记录</h2></div></div>
+   <div class="record-summary-grid">
+     <button data-page="record"><span class="record-circle exercise">🏃</span><span><b>运动</b><small>${td.mins?`${Math.round(td.mins)} min · ${Math.round(td.ex)} kcal`:"暂无记录"}</small></span><em>›</em></button>
+     <button data-page="record"><span class="record-circle diet">🍴</span><span><b>饮食</b><small>${td.count?`${td.count} 条记录`:"暂无记录"}</small></span><em>›</em></button>
+     <button data-page="record"><span class="record-circle weight">⚖️</span><span><b>体重</b><small>${w?`${Number(w.value).toFixed(1)} kg`:"暂无记录"}</small></span><em>›</em></button>
+   </div>
+ </section>`;
+}
+function metric(i,l,v,s){return `<div class="card metric"><span class="label">${i} ${l}</span><div class="value">${v}</div><div class="sub">${s}</div></div>`}
+function eventRow(x){return `<div class="row-card"><div class="row-icon">${x.type==="weight"?"⚖️":x.type==="exercise"?"🏃":"🍽️"}</div><div class="row-main"><b>${esc(x.title||x.food||"记录")}</b><span>${new Date(x.timestamp).toLocaleString()}</span></div><div class="row-value">${x.type==="weight"?(Number(x.value)||0)+" kg":x.type==="exercise"?(Number(x.calories)||0)+" kcal":(Number(x.totalCalories??x.calories)||0)+" kcal"}</div></div>`}
+function recordPage(){return `<div class="section-title"><h3>记录什么？</h3><span class="muted">全部手动记录</span></div><div class="quick-grid">
+ <button class="quick" data-quick="weight"><b>⚖️</b><span>体重</span></button>
+ <button class="quick" data-quick="exercise"><b>🏃</b><span>运动</span></button>
+ <button class="quick" data-quick="diet"><b>🍽️</b><span>饮食</span></button>
+ </div>`}
+
+async function openRecord(type){
+ let body=`<form id="recordForm" class="form"><div class="form-row">${field("日期","date","date",localDate(),true)}${field("时间","time","time",localTime(),true)}</div>`;
+ if(type==="weight")body+=`<div class="field"><label>体重 (kg)</label><input name="value" type="number" step="0.1" inputmode="decimal" min="0" placeholder="68.4" required></div><div class="field"><label>体脂率 (%)</label><input name="bodyFat" type="number" step="0.1" inputmode="decimal" min="0" placeholder="可选"></div>`;
+ if(type==="exercise"){
+ const events=await all("healthEvents");
+ const latestWeight=events.filter(x=>x.type==="weight").sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp))[0];
+ const weightForCal=latestWeight?Number(latestWeight.value):70;
+ body+=`<div class="field"><label>运动类型</label><select name="activity" id="exerciseActivity"><option>步行</option><option>跑步</option><option>骑行</option><option>游泳</option><option>健身</option><option>球类</option><option>其他</option></select></div>${field("持续时间 (分钟)","duration","number","30",true)}${field("距离 (km)","distance","number","")}<div class="field"><label>消耗卡路里 (kcal)</label><input name="calories" id="exerciseCalories" type="number" step="1" min="0" inputmode="numeric" placeholder="自动估算"><small class="muted">按最近一次体重 ${weightForCal.toFixed(1)} kg 估算，可手动修改。</small></div>`;
+}
+ if(type==="diet"){
+ const memory=(await getSettings()).foodCalories||{};
+ const opts=Object.entries(memory).sort((a,b)=>a[0].localeCompare(b[0])).map(([food,cal])=>`<option value="${esc(food)}">${esc(food)} · ${esc(cal)} kcal/份</option>`).join("");
+ body+=`<div class="field"><label>餐次</label><select name="meal"><option>早餐</option><option>午餐</option><option>晚餐</option><option>加餐</option><option>其他</option></select></div>
+ <div class="field"><label>食物</label><select id="foodSelect" aria-label="已保存食物"><option value="">＋ 新食物 / 手动输入</option>${opts}</select></div>
+ <div class="field"><label>食物名称</label><input id="foodInput" name="food" type="text" placeholder="例如 泡面、鸡蛋、牛奶" required></div>
+ <div class="field"><label>份数</label><input id="quantityInput" name="quantity" type="number" step="0.1" min="0.1" value="1" inputmode="decimal" placeholder="例如 2"></div>
+ <div class="field"><label>每份能量 <span id="savedFoodHint" class="muted"></span></label>
+   <div class="energy-input-row"><input id="calorieInput" name="calories" type="number" step="0.1" min="0" inputmode="decimal" placeholder="例如 500"><select id="dietEnergyUnit" name="energyUnit" aria-label="能量单位"><option value="kcal">kcal</option><option value="kj">kJ</option></select></div>
+   <small id="energyConverted" class="muted">最终会统一换算为 kcal 保存。</small>
+ </div>
+ <div class="field"><button type="button" class="btn secondary" id="saveFoodPreset">💾 保存/更新「每份热量」</button><small class="muted">修改这里的热量后，可更新这个食物下次使用的默认值。</small></div>
+ <div class="field"><label>本次总热量 (kcal)</label><input id="totalCaloriesInput" name="totalCalories" type="number" step="1" min="0" inputmode="numeric" placeholder="自动计算" readonly></div>`;}
+ body+=field("备注","note","textarea","")+`<div class="actions"><button class="btn">保存</button><button type="button" class="btn secondary" data-close>取消</button></div></form>`;
+ showModal(type==="weight"?"记录体重":type==="exercise"?"记录运动":"记录饮食",body);
+ const recordForm=document.getElementById("recordForm");
+ if(type==="exercise"){
+   const mets={步行:3.5,跑步:8.3,骑行:7.5,游泳:6.0,健身:5.0,球类:7.0,其他:5.0};
+   const latestWeight=(await all("healthEvents")).filter(x=>x.type==="weight").sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp))[0];
+   const weightForCal=latestWeight?Number(latestWeight.value):70;
+   const activity=recordForm.elements.activity,duration=recordForm.elements.duration,calories=recordForm.elements.calories;
+   const calc=()=>{const met=mets[activity.value]||5,d=Number(duration.value)||0;calories.value=d?Math.round(met*3.5*weightForCal/200*d):""};
+   activity.addEventListener("change",calc);duration.addEventListener("input",calc);calc();
+ }
+ const now=new Date();
+ const pad=n=>String(n).padStart(2,"0");
+ const dateInput=recordForm.elements.date;
+ const timeInput=recordForm.elements.time;
+ if(dateInput) dateInput.value=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+ if(timeInput) timeInput.value=`${pad(now.getHours())}:${pad(now.getMinutes())}`;
+ if(type==="diet"){
+   const foodSelect=document.getElementById("foodSelect"),foodInput=recordForm.elements.food,calorieInput=recordForm.elements.calories,quantityInput=recordForm.elements.quantity,totalInput=recordForm.elements.totalCalories,unitInput=document.getElementById("dietEnergyUnit"),converted=document.getElementById("energyConverted"),savedHint=document.getElementById("savedFoodHint"),savePreset=document.getElementById("saveFoodPreset"),memory=(await getSettings()).foodCalories||{};
+   const calc=()=>{
+     const q=Number(quantityInput.value)||1,c=Number(calorieInput.value)||0,unit=unitInput?.value||"kcal";
+     const kcal=unit==="kj"?c/4.184:c;
+     totalInput.value=kcal?Math.round(kcal*q):"";
+     if(converted) converted.textContent=c?`${c} ${unit} = ${kcal.toFixed(1)} kcal / 份 · 本次 ${Math.round(kcal*q)} kcal`:"最终会统一换算为 kcal 保存。";
+   };
+   const loadFood=()=>{
+     const key=foodSelect.value;
+     if(key){
+       foodInput.value=key;
+       calorieInput.value=memory[key]??"";
+       if(unitInput)unitInput.value="kcal";
+       if(savedHint)savedHint.textContent=`· 已保存 ${memory[key]} kcal/份，可修改`;
+     }else{
+       if(savedHint)savedHint.textContent="";
+     }
+     calc();
+   };
+   foodSelect.addEventListener("change",loadFood);
+   foodInput.addEventListener("input",()=>{
+     const key=foodInput.value.trim();
+     if(key&&memory[key]!=null&&foodSelect.value!==key){
+       foodSelect.value=key;calorieInput.value=memory[key];
+       if(savedHint)savedHint.textContent=`· 已保存 ${memory[key]} kcal/份，可修改`;
+     }else if(!key){
+       foodSelect.value="";
+       if(savedHint)savedHint.textContent="";
+     }
+     calc();
+   });
+   calorieInput.addEventListener("input",calc);quantityInput.addEventListener("input",calc);unitInput?.addEventListener("change",calc);
+   savePreset?.addEventListener("click",async()=>{
+     const key=foodInput.value.trim(),c=Number(calorieInput.value)||0,unit=unitInput?.value||"kcal";
+     if(!key||c<=0){alert("请先输入食物名称和每份热量");return}
+     const kcal=unit==="kj"?c/4.184:c;
+     const current=(await getSettings()).foodCalories||{};
+     current[key]=Number(kcal.toFixed(1));
+     await saveSettings({foodCalories:current});
+     foodSelect.innerHTML=`<option value="">＋ 新食物 / 手动输入</option>${Object.entries(current).sort((a,b)=>a[0].localeCompare(b[0])).map(([food,cal])=>`<option value="${esc(food)}">${esc(food)} · ${esc(cal)} kcal/份</option>`).join("")}`;
+     foodSelect.value=key;
+     if(unitInput)unitInput.value="kcal";
+     calorieInput.value=Number(kcal.toFixed(1));
+     if(savedHint)savedHint.textContent=`· 已保存 ${kcal.toFixed(1)} kcal/份，可修改`;
+     calc();
+   });
+   calc();
+}
+ recordForm.onsubmit=async e=>{e.preventDefault();let f=new FormData(e.target),x={id:uid(),type,timestamp:localISO(f.get("date"),f.get("time")),createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
+ if(type==="weight"){x.value=+f.get("value");x.bodyFat=f.get("bodyFat")?+f.get("bodyFat"):null;x.title="体重";x.summary=`${x.value} kg`}
+ else if(type==="exercise"){x.activity=f.get("activity");x.duration=+f.get("duration");x.distance=f.get("distance")?+f.get("distance"):null;x.calories=f.get("calories")?+f.get("calories"):null;x.title=x.activity;x.summary=`${x.duration} min${x.distance?` · ${x.distance} km`:""}${x.calories!=null?` · ${x.calories} kcal`:""}`}
+ else {x.meal=f.get("meal");x.food=f.get("food");x.quantity=f.get("quantity")?+f.get("quantity"):1;const entered=f.get("calories")!==""?Number(f.get("calories")):null,unit=f.get("energyUnit")||"kcal";x.calories=entered!=null?(unit==="kj"?entered/4.184:entered):null;x.totalCalories=x.calories!=null?Math.round(x.calories*x.quantity):null;x.title=x.meal;x.summary=`${x.food}${x.quantity!==1?` × ${x.quantity}`:""}${x.totalCalories!=null?` · ${x.totalCalories} kcal`:""}`;if(x.food&&x.calories!=null){const memory=(await getSettings()).foodCalories||{};memory[x.food.trim()]=Number(x.calories.toFixed(1));await saveSettings({foodCalories:memory})}}
+ x.note=f.get("note")||"";await put("healthEvents",x);closeModal();render()}
+}
+function field(l,n,t="text",p="",req=false){if(t==="textarea")return `<div class="field"><label>${l}</label><textarea name="${n}" placeholder="${p}"></textarea></div>`;const isDateTime=t==="date"||t==="time";return `<div class="field"><label>${l}</label><input name="${n}" type="${t}" ${isDateTime?`value="${esc(p)}"`: `placeholder="${esc(p)}"`} ${req?"required":""}></div>`}
+
+async function trendsPage(){
+ const events=await all("healthEvents"),items=events.filter(x=>x.type===trend).sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp)).slice(-20);
+ const vals=items.map(x=>trend==="weight"?x.value:x.duration).filter(Number.isFinite),max=Math.max(...vals,1),min=Math.min(...vals,0);
+ const pts=vals.map((v,i)=>`${2+(i/Math.max(vals.length-1,1))*96},${95-(v-min)/(max-min||1)*78}`).join(" ");
+ return `<div class="tabs"><button class="tab ${trend==="weight"?"active":""}" data-trend="weight">⚖️ 体重</button><button class="tab ${trend==="exercise"?"active":""}" data-trend="exercise">🏃 运动</button></div>
+ <div class="card"><div class="section-title"><h3>${trend==="weight"?"体重趋势":"运动趋势"}</h3><span class="pill">${vals.length} 条</span></div><div class="chart">${vals.length?`<svg viewBox="0 0 100 100" preserveAspectRatio="none"><polyline points="${pts}" fill="none" stroke="#16877a" stroke-width="2.5" vector-effect="non-scaling-stroke"/>${vals.map((v,i)=>{let x=2+(i/Math.max(vals.length-1,1))*96,y=95-(v-min)/(max-min||1)*78;return `<circle cx="${x}" cy="${y}" r="2.2" fill="#16877a"/>`}).join("")}</svg>`:`<div class="empty">暂无数据</div>`}</div></div>`;
+}
+async function timeline(){
+ const es=(await all("healthEvents")).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));if(!es.length)return `<div class="empty">还没有记录。</div>`;
+ const g={};es.forEach(x=>(g[x.timestamp.slice(0,10)]??=[]).push(x));
+ return Object.entries(g).map(([d,a])=>`<div class="timeline-date">${d}</div>${a.map(x=>`<div class="timeline-item"><div class="timeline-card"><span class="time">${new Date(x.timestamp).toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit"})}</span><strong>${x.type==="weight"?"⚖️":x.type==="exercise"?"🏃":"🍽️"} ${esc(x.title)}</strong><small>${esc(x.summary)}</small><button class="delete-btn timeline-delete" data-delete="${esc(x.id)}" data-store="healthEvents" aria-label="删除">删除</button></div></div>`).join("")}`).join("");
+}
+async function me(){
+ const settings=await getSettings(),h=settings.heightCm||"";
+ return `<div class="hero"><div class="date">APP SETTINGS</div><h2>设置</h2><div class="muted">管理个人信息、身体参数和本地数据。</div>
+ <div class="section-title"><h3>个人信息</h3></div>
+ <div class="card settings-card"><label class="setting-label">身高 (cm)</label><div class="height-row"><input id="heightInput" type="number" step="0.1" inputmode="decimal" min="50" max="250" value="${esc(h)}" placeholder="例如 175"><button class="btn" id="saveHeight">保存</button></div><small class="muted">用于 BMI 和热量计算。</small></div>
+ <div class="section-title"><h3>身体参数</h3></div><div class="card settings-card">
+ <div class="field"><label>性别</label><select id="setSex"><option value="男" ${(settings.sex||"男")==="男"?"selected":""}>男</option><option value="女" ${settings.sex==="女"?"selected":""}>女</option></select></div>
+ <div class="field"><label>出生日期</label><input id="setBirth" type="date" value="${esc(settings.birthDate||"")}"></div>
+ <div class="field"><label>日常活动强度</label><select id="setActivity"><option value="1.2" ${String(settings.activityFactor||1.2)==="1.2"?"selected":""}>1.20 · 久坐</option><option value="1.375" ${String(settings.activityFactor)==="1.375"?"selected":""}>1.375 · 轻度活动</option><option value="1.55" ${String(settings.activityFactor)==="1.55"?"selected":""}>1.55 · 中度活动</option><option value="1.725" ${String(settings.activityFactor)==="1.725"?"selected":""}>1.725 · 高度活动</option><option value="1.9" ${String(settings.activityFactor)==="1.9"?"selected":""}>1.90 · 极高活动</option></select></div>
+ <button class="btn" id="saveBodyParams">保存身体参数</button></div>
+ <div class="section-title"><h3>减肥目标</h3></div><div class="settings"><button class="setting" id="manageGoal"><b>🎯 减肥目标</b><span>${settings.weightLossGoal?"已设置 ›":"设置 ›"}</span></button></div>
+ <div class="section-title"><h3>☁️ 多设备同步</h3></div><div class="card drive-sync-card"><div id="driveStatus">未连接</div><div class="drive-actions"><button class="btn" id="driveConnect">连接 Google Drive</button><button class="drive-secondary" id="driveDisconnect">断开</button><button class="btn" id="driveUpload">☁️ 上传 / 同步</button><button class="drive-secondary" id="driveDownload">⬇️ 从云端恢复</button></div><label class="drive-auto"><input type="checkbox" id="driveAutoSync"><span>数据修改后自动同步</span></label><div id="driveProgress" class="drive-progress"><div class="drive-track"><div id="driveBar" class="drive-bar"></div></div><div class="drive-progress-text"><span id="driveText">准备同步…</span><span id="drivePct">0%</span></div></div><div class="muted" style="margin-top:10px">健康记录和设置会同步到你的 Google Drive。数据仍保存在本机浏览器。首次连接需要 Google 授权。</div></div>
+ <div class="section-title"><h3>数据管理</h3></div><div class="settings"><button class="setting" id="export"><b>📦 导出数据</b><span>JSON ›</span></button><button class="setting" id="import"><b>📥 导入数据</b><span>JSON ›</span></button><input id="fileInput" type="file" accept=".json" hidden></div>
+ <div class="section-title"><h3>关于</h3></div><div class="card version-card"><span>我的健康</span><strong>版本 3.9</strong></div>`}
+
+function kjToKcal(kj){return (Number(kj)||0)/4.184}
+function normalizeDietEnergy(value,unit){const n=Number(value)||0;return unit==="kj"?n/4.184:n}
+
+function localDateKey(d=new Date()){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function dateKeyOffset(key,days){const d=new Date(key+"T00:00:00");d.setDate(d.getDate()+days);return localDateKey(d)}
+function rolling7Performance(events,settings){
+ const todayKey=localDateKey(),rows=[];
+ for(let i=1;i<=7;i++)rows.push(dateKeyOffset(todayKey,-i));
+ const g=settings.weightLossGoal||{},start=Number(g.startWeight),target=Number(g.targetWeight);
+ let dailyDeficit=0;
+ if(start>target&&g.startDate&&g.endDate){dailyDeficit=(start-target)*7700/daysBetween(g.startDate,g.endDate)}
+ const latestWeight=events.filter(x=>x.type==="weight").sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp))[0];
+ const w=Number(latestWeight?.value)||start,height=Number(settings.heightCm),age=ageFromBirthdate(settings.birthDate);
+ const bmr=calcBMR(w,height,age,settings.sex),tdee=bmr?bmr*(Number(settings.activityFactor)||1.2):null;
+ const baseBudget=tdee!=null?Math.max(0,tdee-dailyDeficit):null;
+ let food=0,budget=0,exercise=0;
+ for(const key of rows){
+   food+=events.filter(x=>x.type==="diet"&&x.timestamp.slice(0,10)===key).reduce((a,x)=>a+(Number(x.totalCalories??((x.calories||0)*(x.quantity||1)))||0),0);
+   exercise+=events.filter(x=>x.type==="exercise"&&x.timestamp.slice(0,10)===key).reduce((a,x)=>a+(Number(x.calories)||0),0);
+   if(baseBudget!=null)budget+=baseBudget;
+ }
+ if(baseBudget!=null)budget+=exercise;
+ const margin=budget-food;
+ const targetDeficit=dailyDeficit*7;
+ const actualDeficit=Math.max(0,margin);
+ const completion=targetDeficit>0?Math.min(100,Math.max(0,actualDeficit/targetDeficit*100)):null;
+ return {days:7,food,budget,margin,exercise,targetDeficit,actualDeficit,goalCompletion:completion};
+}
+function weightTrendProjection(events,g){
+ const points=events.filter(x=>x.type==="weight"&&x.value!=null).map(x=>({t:new Date(x.timestamp).getTime(),w:Number(x.value)})).filter(x=>isFinite(x.t)&&isFinite(x.w)).sort((a,b)=>a.t-b.t);
+ if(points.length<3||!g||!(Number(g.targetWeight)>0))return null;
+ const recent=points.slice(-8),t0=recent[0].t;
+ const xs=recent.map(p=>(p.t-t0)/86400000),ys=recent.map(p=>p.w),n=xs.length;
+ const mx=xs.reduce((a,b)=>a+b,0)/n,my=ys.reduce((a,b)=>a+b,0)/n;
+ const den=xs.reduce((a,x)=>a+(x-mx)**2,0);
+ if(!den)return null;
+ const slope=xs.reduce((a,x,i)=>a+(x-mx)*(ys[i]-my),0)/den;
+ const current=recent[recent.length-1].w, target=Number(g.targetWeight);
+ if(!(slope<0)&&current>target)return {current,target,slope,days:null,date:null,points:recent.length};
+ if(current<=target)return {current,target,slope,days:0,date:new Date().toISOString().slice(0,10),points:recent.length};
+ const days=(target-current)/slope;
+ const d=new Date();d.setDate(d.getDate()+Math.ceil(days));
+ return {current,target,slope,days,date:localDateKey(d),points:recent.length};
+}
+function getLocalDateValue(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function daysBetween(a,b){return Math.max(1,Math.round((new Date(b+"T00:00:00")-new Date(a+"T00:00:00"))/86400000))}
+function ageFromBirthdate(b){if(!b)return null;const d=new Date(b+"T00:00:00"),n=new Date();let a=n.getFullYear()-d.getFullYear();const m=n.getMonth()-d.getMonth();if(m<0||(m===0&&n.getDate()<d.getDate()))a--;return a}
+function calcBMR(w,h,a,sex){if(!(w>0&&h>0&&a>=10))return null;return Math.round(10*w+6.25*h-5*a+(sex==="女"?-161:5))}
+function calcGoalTarget(st,en,sw,tw){const days=daysBetween(st,en),loss=Math.max(0,sw-tw);return{days,loss,weekly:loss/days*7,dailyDeficit:loss*7700/days}}
+async function saveBodyParams(){
+ const height=document.getElementById("heightInput")?.value;
+ const sex=document.getElementById("setSex")?.value||"男";
+ const birthDate=document.getElementById("setBirth")?.value||"";
+ const activityFactor=Number(document.getElementById("setActivity")?.value||1.2);
+ await saveSettings({heightCm:height===""?null:Number(height),sex,birthDate,activityFactor});
+ alert("身体参数已保存");
+ await render();
+}
+
+
+
+async function renderGoalIntegrated(){
+ const el=document.getElementById("goalIntegrated");if(!el)return;
+ const settings=await getSettings(),events=await all("healthEvents"),g=settings.weightLossGoal||{};
+ const latest=events.filter(x=>x.type==="weight").sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp))[0];
+ const weight=Number(latest?.value)||Number(g.startWeight);
+ const height=Number(settings.heightCm),age=ageFromBirthdate(settings.birthDate);
+ const bmr=calcBMR(weight,height,age,settings.sex),tdee=bmr?bmr*(Number(settings.activityFactor)||1.2):null;
+ let dailyDeficit=0;
+ if(g.startWeight&&g.targetWeight&&g.startDate&&g.endDate)dailyDeficit=(Number(g.startWeight)-Number(g.targetWeight))*7700/daysBetween(g.startDate,g.endDate);
+ const base=tdee!=null?Math.max(0,tdee-dailyDeficit):null;
+ const day=(key)=>{
+   const food=events.filter(x=>x.type==="diet"&&x.timestamp.slice(0,10)===key).reduce((a,x)=>a+(Number(x.totalCalories??((x.calories||0)*(x.quantity||1)))||0),0);
+   const ex=events.filter(x=>x.type==="exercise"&&x.timestamp.slice(0,10)===key).reduce((a,x)=>a+(Number(x.calories)||0),0);
+   const budget=base!=null?base+ex:null;
+   return {food,ex,budget,margin:budget!=null?budget-food:null};
+ };
+ const today=localDateKey(),yesterday=dateKeyOffset(today,-1),td=day(today),yd=day(yesterday);
+ const r=rolling7Performance(events,settings);
+ const p=weightTrendProjection(events,g);
+ const loss=Math.max(0,Number(g.startWeight)-weight),remaining=Math.max(0,weight-Number(g.targetWeight));
+ const totalLoss=Math.max(0,Number(g.startWeight)-Number(g.targetWeight));
+ const progress=totalLoss>0?Math.min(100,Math.max(0,loss/totalLoss*100)):0;
+ const status=(d,label)=>d.budget==null?`<div class="goal-day"><b>${label}</b><span class="muted">需设置目标与身体参数</span></div>`:`<div class="goal-day"><div class="goal-day-head"><b>${label}</b><span class="${d.margin>=0?"good-text":"bad-text"}">${d.margin>=0?"🟢 达标":"🔴 超预算"}</span></div><div><strong>${Math.round(d.food).toLocaleString()} / ${Math.round(d.budget).toLocaleString()} kcal</strong> <span class="muted">· ${d.margin>=0?"剩余":"超过"} ${Math.round(Math.abs(d.margin)).toLocaleString()} kcal${d.ex?` · 运动 +${Math.round(d.ex)} kcal`:""}</span></div></div>`;
+ const rollingGood=r.margin>=0;
+ const completion=r.goalCompletion==null?null:Math.round(r.goalCompletion);
+ el.innerHTML=`
+ <div class="goal-main-stats">
+   <div><span>当前</span><b>${weight?weight.toFixed(1):"—"} kg</b></div>
+   <div><span>目标</span><b>${Number(g.targetWeight)?Number(g.targetWeight).toFixed(1):"—"} kg</b></div>
+   <div><span>已减</span><b>${loss.toFixed(1)} kg</b></div>
+   <div><span>还需</span><b>${remaining.toFixed(1)} kg</b></div>
+ </div>
+ <div class="goal-progress"><i style="width:${progress}%"></i></div>
+ <div class="goal-progress-label">目标完成 ${Math.round(progress)}%</div>
+ ${p?`<div class="goal-inline-grid"><div><span>实际速度</span><b>${(-p.slope*7>0?(-p.slope*7).toFixed(2):"—")} kg/周</b></div><div><span>预计达成</span><b>${p.date?new Date(p.date+"T00:00:00").toLocaleDateString("zh-CN",{month:"2-digit",day:"2-digit"}):"暂无法预计"}</b></div><div><span>目标日期</span><b>${g.endDate||"—"}</b></div><div><span>目标速度</span><b>${dailyDeficit>0?(dailyDeficit*7/7700).toFixed(2):"—"} kg/周</b></div></div>`:""}
+ <div class="goal-divider"></div>
+ <div class="goal-section-title">🍽️ 饮食</div>
+ ${status(td,"今天")}
+ ${status(yd,"昨天")}
+ <div class="goal-divider"></div>
+ <div class="goal-section-title">📊 滚动 7 天</div>
+ <div class="goal-7-grid">
+   <div><span>实际摄入</span><b>${Math.round(r.food).toLocaleString()} kcal</b></div>
+   <div><span>7天预算</span><b>${Math.round(r.budget).toLocaleString()} kcal</b></div>
+   <div><span>预算余量</span><b>${rollingGood?"":"−"}${Math.round(Math.abs(r.margin)).toLocaleString()} kcal</b></div>
+   <div><span>目标缺口完成率</span><b>${completion==null?"—":completion+"%"}</b></div>
+ </div>
+ <div class="rolling-status ${rollingGood?"good":"warn"}">${rollingGood?"🟢 低于预算":"🔴 超过预算"} ${Math.round(Math.abs(r.margin)).toLocaleString()} kcal${r.exercise?` · 运动 +${Math.round(r.exercise)} kcal`:""}</div>`;
+}
+async function renderWeightProjection(){
+ const el=document.getElementById("weightProjection");if(!el)return;
+ const settings=await getSettings(),events=await all("healthEvents"),g=settings.weightLossGoal||{},p=weightTrendProjection(events,g);
+ if(!p){el.innerHTML=`<div class="muted">至少记录 3 次体重后，会根据最近体重趋势估算预计达成日期。</div>`;return}
+ const weekly=(-p.slope)*7;
+ el.innerHTML=`<div class="projection-grid"><div><span>当前体重</span><b>${p.current.toFixed(1)} kg</b></div><div><span>还需减重</span><b>${Math.max(0,p.current-p.target).toFixed(1)} kg</b></div><div><span>实际速度</span><b>${weekly>0?weekly.toFixed(2):"—"} kg/周</b></div><div><span>预计达成</span><b>${p.date?new Date(p.date+"T00:00:00").toLocaleDateString("zh-CN",{year:"numeric",month:"2-digit",day:"2-digit"}):"暂无法预计"}</b></div></div>`;
+}
+
+
+async function openGoal(){
+ const settings=await getSettings(),events=await all("healthEvents"),latest=events.filter(x=>x.type==="weight").sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp))[0],g=settings.weightLossGoal||{};
+ const d=new Date();d.setMonth(d.getMonth()+3);
+ const end=g.endDate||`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+ const start=g.startDate||getLocalDateValue();
+ showModal("🎯 减肥目标",`<form id="goalForm" class="form">
+ <div class="field"><label>当前体重 (kg)</label><input name="startWeight" type="number" step="0.1" min="1" value="${esc(g.startWeight??latest?.value??"")}" required></div>
+ <div class="field"><label>目标体重 (kg)</label><input name="targetWeight" type="number" step="0.1" min="1" value="${esc(g.targetWeight??"")}" required></div>
+ <div class="form-row"><div class="field"><label>开始日期</label><input name="startDate" type="date" value="${start}" required></div><div class="field"><label>目标日期</label><input name="endDate" type="date" value="${end}" required></div></div>
+ <div id="goalPreview" class="goal-status goal-info">输入目标后自动计算。</div>
+ <div class="actions"><button type="button" class="btn secondary" data-close>取消</button><button class="btn">保存目标</button></div></form>`);
+ const f=document.getElementById("goalForm"),pr=document.getElementById("goalPreview");
+ const update=()=>{const sw=Number(f.elements.startWeight.value),tw=Number(f.elements.targetWeight.value),sd=f.elements.startDate.value,ed=f.elements.endDate.value;if(!(sw>tw&&tw>0&&ed>sd)){pr.textContent="请输入有效的目标体重和日期";return}const x=calcGoalTarget(sd,ed,sw,tw);pr.innerHTML=`预计减重 <b>${x.loss.toFixed(1)} kg</b> · ${x.days} 天<br>每周约 <b>${x.weekly.toFixed(2)} kg</b> · 平均每日热量缺口 <b>${Math.round(x.dailyDeficit)} kcal</b>`};
+ f.addEventListener("input",update);f.addEventListener("change",update);
+ f.onsubmit=async e=>{e.preventDefault();const sw=Number(f.elements.startWeight.value),tw=Number(f.elements.targetWeight.value),sd=f.elements.startDate.value,ed=f.elements.endDate.value;if(!(sw>tw&&tw>0&&ed>sd)){alert("请检查目标体重和日期");return}await saveSettings({weightLossGoal:{startWeight:sw,targetWeight:tw,startDate:sd,endDate:ed,status:"active",createdAt:g.createdAt||new Date().toISOString()}});closeModal();await render()};
+ update();
+}function showModal(t,b){document.getElementById("modalTitle").textContent=t;document.getElementById("modalBody").innerHTML=b;document.getElementById("modal").classList.remove("hidden")}
+function closeModal(){document.getElementById("modal").classList.add("hidden")}
+(async()=>{try{await openDB();await render()}catch(e){console.error(e);document.getElementById("main").innerHTML=`<div class="empty"><strong>页面加载失败</strong><br><span class="muted">${esc(e.message||"未知错误")}</span><br><button class="btn" style="margin-top:12px" onclick="location.reload()">重新加载</button></div>`}})();
+</script>
+<script id="google-drive-sync-v1">
+const DRIVE_CLIENT_ID='801960562511-c3dqtemfipvq4hbn4ipj1mp20sg32lrg.apps.googleusercontent.com';
+const DRIVE_SCOPE='https://www.googleapis.com/auth/drive.file';
+const DRIVE_FILE_NAME='my-health-sync-v1.json';
+const DRIVE_AUTO_KEY='myHealth.driveAutoSync.v1';
+let driveToken=null,driveTokenExpiresAt=0,driveFileId=null,driveBusy=false,driveGISPromise=null,driveAutoTimer=null,driveRestoring=false;
+function driveEnsureGIS(){if(window.google?.accounts?.oauth2)return Promise.resolve();if(driveGISPromise)return driveGISPromise;driveGISPromise=new Promise((resolve,reject)=>{const old=document.querySelector('script[data-google-gis]');if(old){old.addEventListener('load',resolve);old.addEventListener('error',reject);return}const sc=document.createElement('script');sc.src='https://accounts.google.com/gsi/client';sc.async=true;sc.defer=true;sc.dataset.googleGis='1';sc.onload=resolve;sc.onerror=()=>reject(new Error('Google Identity Services 加载失败'));document.head.appendChild(sc)});return driveGISPromise}
+function driveTokenValid(){return !!driveToken&&Date.now()<driveTokenExpiresAt-60000}
+async function driveGetToken(interactive=true){if(driveTokenValid())return driveToken;await driveEnsureGIS();return await new Promise((resolve,reject)=>{let settled=false;const client=google.accounts.oauth2.initTokenClient({client_id:DRIVE_CLIENT_ID,scope:DRIVE_SCOPE,callback:r=>{if(r.error){settled=true;reject(new Error(r.error_description||r.error));return}driveToken=r.access_token;driveTokenExpiresAt=Date.now()+Number(r.expires_in||3600)*1000;settled=true;resolve(driveToken)},error_callback:e=>{if(!settled)reject(new Error(e?.message||'Google 授权未完成'))}});client.requestAccessToken({prompt:interactive?'consent':''})})}
+async function driveFetch(url,options={}){let token=await driveGetToken(options.interactive!==false);const headers=new Headers(options.headers||{});headers.set('Authorization','Bearer '+token);let r=await fetch(url,{...options,headers});if(r.status===401){driveToken=null;driveTokenExpiresAt=0;token=await driveGetToken(options.interactive!==false);headers.set('Authorization','Bearer '+token);r=await fetch(url,{...options,headers})}if(!r.ok){let msg='HTTP '+r.status;try{const e=await r.json();msg=e.error?.message||msg}catch{}throw new Error(msg)}return r}
+function driveSetStatus(text,type=''){const el=document.getElementById('driveStatus');if(el){el.className='drive-status '+(type==='ok'?'ok':type==='error'?'error':'');el.textContent=text}}
+function driveProgress(pct,text){const box=document.getElementById('driveProgress'),bar=document.getElementById('driveBar'),tx=document.getElementById('driveText'),pc=document.getElementById('drivePct');if(!box)return;box.classList.add('show');bar.style.width=Math.max(0,Math.min(100,pct))+'%';tx.textContent=text;pc.textContent=Math.round(pct)+'%';if(pct>=100)setTimeout(()=>box.classList.remove('show'),900)}
+async function driveFindFile(){const q=`name='${DRIVE_FILE_NAME}' and trashed=false`;const r=await driveFetch('https://www.googleapis.com/drive/v3/files?'+new URLSearchParams({q,spaces:'drive',fields:'files(id,name,modifiedTime,size)',pageSize:'10'}));const data=await r.json();driveFileId=data.files?.[0]?.id||null;return data.files?.[0]||null}
+async function drivePayload(){return{schema:'my-health-sync-v1',appVersion:'3.1',updatedAt:new Date().toISOString(),stores:{healthEvents:await all('healthEvents'),settings:await all('settings')}}}
+async function driveUpload(showToast=true,interactive=true){if(driveBusy)return;driveBusy=true;driveSetStatus('正在同步到 Google Drive…');driveProgress(10,'准备数据…');try{await driveGetToken(interactive);driveProgress(25,'查找云端文件…');const existing=await driveFindFile();const payload=await drivePayload(),text=JSON.stringify(payload);driveProgress(45,'上传健康数据…');if(existing){driveFileId=existing.id;await driveFetch('https://www.googleapis.com/upload/drive/v3/files/'+encodeURIComponent(driveFileId)+'?uploadType=media',{method:'PATCH',headers:{'Content-Type':'application/json'},body:text,interactive})}else{const boundary='myHealthSyncBoundary'+Date.now(),meta={name:DRIVE_FILE_NAME,mimeType:'application/json'},body='--'+boundary+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+JSON.stringify(meta)+'\r\n--'+boundary+'\r\nContent-Type: application/json\r\n\r\n'+text+'\r\n--'+boundary+'--';const r=await driveFetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+boundary},body,interactive});const data=await r.json();driveFileId=data.id}localStorage.setItem('myHealth.driveConnected','1');driveProgress(100,'同步完成');driveSetStatus('已同步到 Google Drive · '+new Date().toLocaleString(),'ok');if(showToast)alert('健康数据已同步到 Google Drive')}catch(e){driveProgress(100,'同步失败');driveSetStatus(e.message||String(e),'error');if(showToast)alert('Google Drive 同步失败：'+(e.message||e))}finally{driveBusy=false}}
+async function driveDownload(){if(driveBusy)return;driveBusy=true;driveSetStatus('正在从 Google Drive 下载…');driveProgress(10,'查找云端数据…');try{const f=await driveFindFile();if(!f){driveProgress(100,'没有云端文件');driveSetStatus('已连接 · 云端尚未创建同步文件','error');alert('Google Drive 中还没有健康同步文件，请先在一台设备点击“上传 / 同步”。');return}driveFileId=f.id;driveProgress(40,'下载健康数据…');const r=await driveFetch('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(driveFileId)+'?alt=media',{interactive:true});const data=await r.json();if(data.schema!=='my-health-sync-v1'||!data.stores)throw new Error('云端文件格式不正确');const events=Array.isArray(data.stores.healthEvents)?data.stores.healthEvents:[],settings=Array.isArray(data.stores.settings)?data.stores.settings:[];if(!confirm(`云端有 ${events.length} 条健康记录。\n\n恢复后会覆盖本机当前健康记录和设置。\n\n确定继续吗？`))return;driveRestoring=true;driveProgress(65,'恢复本机数据…');const d=await openDB();for(const store of STORES){await new Promise((ok,no)=>{const tx=d.transaction(store,'readwrite');tx.objectStore(store).clear();tx.oncomplete=ok;tx.onerror=()=>no(tx.error)});for(const v of (store==='healthEvents'?events:settings))await put(store,v)}driveRestoring=false;driveProgress(100,'恢复完成');driveSetStatus('已从 Google Drive 恢复','ok');alert('云端健康数据已恢复到本机');location.reload()}catch(e){driveRestoring=false;driveProgress(100,'恢复失败');driveSetStatus(e.message||String(e),'error');alert('Google Drive 恢复失败：'+(e.message||e))}finally{driveBusy=false}}
+async function driveConnect(){try{driveSetStatus('正在连接 Google Drive…');const alreadyConnected=localStorage.getItem('myHealth.driveConnected')==='1';await driveGetToken(!alreadyConnected);const f=await driveFindFile();driveFileId=f?.id||null;localStorage.setItem('myHealth.driveConnected','1');driveSetStatus(f?'已连接 · 云端文件已关联':'已连接 · 云端尚未创建同步文件','ok')}catch(e){driveSetStatus('连接失败：'+(e.message||e),'error');alert('Google Drive 连接失败：'+(e.message||e))}}
+function driveDisconnect(){driveToken=null;driveTokenExpiresAt=0;driveFileId=null;clearTimeout(driveAutoTimer);localStorage.removeItem('myHealth.driveConnected');driveSetStatus('未连接')}
+function driveScheduleAutoSync(){if(driveRestoring||!document.getElementById('driveAutoSync')?.checked||!driveTokenValid())return;clearTimeout(driveAutoTimer);driveAutoTimer=setTimeout(()=>driveUpload(false,false),1200)}
+function driveMarkLocalChange(){if(!driveRestoring)driveScheduleAutoSync()}
+function driveBindUI(){const auto=document.getElementById('driveAutoSync');if(auto&&!auto.dataset.bound){auto.dataset.bound='1';auto.checked=localStorage.getItem(DRIVE_AUTO_KEY)==='1';auto.addEventListener('change',e=>{localStorage.setItem(DRIVE_AUTO_KEY,e.target.checked?'1':'0');if(e.target.checked)driveScheduleAutoSync()})}}
+async function driveSilentRestore(){if(localStorage.getItem('myHealth.driveConnected')!=='1')return;try{await driveGetToken(false);const f=await driveFindFile();driveFileId=f?.id||null;driveSetStatus(f?'已连接 · 云端文件已关联':'已连接 · 云端尚未创建同步文件','ok')}catch(e){driveSetStatus('未连接 · 点击“连接 Google Drive”重新授权')}}
+driveBindUI();
+</script>
+<script>
+if("serviceWorker"in navigator){
+ window.addEventListener("load",async()=>{
+  try{
+   const reg=await navigator.serviceWorker.register("sw.js",{updateViaCache:"none"});
+   reg.update();
+   if(reg.waiting)reg.waiting.postMessage("SKIP_WAITING");
+   reg.addEventListener("updatefound",()=>{
+    const nw=reg.installing;if(!nw)return;
+    nw.addEventListener("statechange",()=>{
+     if(nw.state==="installed"&&navigator.serviceWorker.controller)nw.postMessage("SKIP_WAITING");
+    });
+   });
+   let reloaded=false;
+   navigator.serviceWorker.addEventListener("controllerchange",()=>{
+    if(!reloaded){reloaded=true;location.reload();}
+   });
+  }catch(e){console.error("Service Worker:",e)}
+ });
+}
+</script>
+<script>
+function syncDietEnergyUnit(select){
+ const f=select.closest("form")||select.parentElement;
+ const i=f?.querySelector('input[name="calories"],input[name="kcal"],input[name="energy"],#dietCalories');
+ if(!i)return;
+ const old=select.dataset.unit||"kcal",v=Number(i.value);
+ if(!Number.isFinite(v))return;
+ const kcal=old==="kj"?v/4.184:v;
+ i.value=select.value==="kj"?(kcal*4.184).toFixed(0):kcal.toFixed(1);
+ select.dataset.unit=select.value;
+}
+document.addEventListener("change",e=>{if(e.target.id==="dietEnergyUnit")syncDietEnergyUnit(e.target)});
+</script>
+<script>
+document.addEventListener("gesturestart",e=>e.preventDefault(),{passive:false});
+document.addEventListener("gesturechange",e=>e.preventDefault(),{passive:false});
+document.addEventListener("gestureend",e=>e.preventDefault(),{passive:false});
+let __lastTouchEnd=0;
+document.addEventListener("touchend",e=>{
+  const now=Date.now();
+  if(now-__lastTouchEnd<=300)e.preventDefault();
+  __lastTouchEnd=now;
+},{passive:false});
+</script>
+</body>
+</html   <div class="weight-chart">
+     <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" class="weight-spark">
+       <polyline points="${poly}" fill="none" stroke="currentColor" stroke-width="2.5" vector-effect="non-scaling-stroke"/>
+       ${pts.map((p,i)=>`<circle cx="${px(i)}" cy="${py(p)}" r="3" fill="currentColor"/>`).join("")}
+     </svg>
+     <div class="weight-data-list">
+       ${pts.map(p=>`<div class="weight-data-row"><span>${p.label}</span><strong>${p.w.toFixed(1)} kg</strong></div>`).join("")}
+     </div>
+   </div>`;pe html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f6fbfa">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="我的健康">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180.png?v=4.4">
 <link rel="manifest" href="manifest.json">
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#f6fbfa;color:#17312f;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}body{min-height:100vh}.topbar{height:88px;padding:22px 18px 10px;display:flex;align-items:flex-end;justify-content:space-between;position:sticky;top:0;z-index:10;background:rgba(246,251,250,.95);backdrop-filter:blur(18px)}.eyebrow{font-size:10px;letter-spacing:1.7px;color:#7d9995;font-weight:700}.topbar h1{font-size:27px;margin:5px 0 0}.icon-btn{border:0;background:#fff;width:42px;height:42px;border-radius:14px;box-shadow:0 5px 18px #17433b12;color:#177b70;font-size:25px;cursor:pointer}main{padding:8px 16px 98px;max-width:760px;margin:auto}.hero{background:linear-gradient(135deg,#dff5ef,#edf9f6);border-radius:25px;padding:20px;margin:8px 0 18px}.hero .date{font-size:13px;color:#66827e}.hero h2{font-size:26px;margin:7px 0 4px}.muted{color:#78918d;font-size:13px;line-height:1.5}.section-title{display:flex;justify-content:space-between;align-items:center;margin:22px 2px 10px}.section-title h3{margin:0;font-size:16px}.link{border:0;background:none;color:#17877b;font-weight:700}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}.card{background:#fff;border-radius:19px;padding:15px;box-shadow:0 5px 20px #17433b0b;border:1px solid #e8f0ee}.metric{min-height:116px}.metric .label{font-size:12px;color:#78908c}.metric .value{font-size:24px;font-weight:750;margin:12px 0 4px}.metric .sub{font-size:11px;color:#91a6a2}.row-card{background:#fff;border-radius:18px;padding:14px 15px;display:flex;align-items:center;gap:12px;margin-bottom:9px;box-shadow:0 4px 18px #17433b0a}.row-icon{width:40px;height:40px;border-radius:13px;background:#edf8f5;display:grid;place-items:center;font-size:19px}.row-main{flex:1}.row-main strong{display:block;font-size:14px}.row-main span{display:block;font-size:12px;color:#7c9691;margin-top:4px}.status{font-size:12px;font-weight:700;color:#819994}.status.done{color:#168276}.quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.quick{border:0;background:#fff;border-radius:18px;padding:19px 10px;box-shadow:0 4px 18px #17433b0a;color:#24413e}.quick b{display:block;font-size:25px;margin-bottom:8px;color:#16877a}.quick span{font-size:12px}.bottom-nav{position:fixed;left:0;right:0;bottom:0;height:76px;padding:8px 8px calc(8px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(5,1fr);background:rgba(255,255,255,.97);backdrop-filter:blur(20px);border-top:1px solid #e5eeec;z-index:20}.nav-btn{border:0;background:none;color:#8aa09d;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border-radius:15px}.nav-btn span{font-size:21px}.nav-btn small{font-size:10px}.nav-btn.active{color:#138276;background:#edf8f5}.empty{text-align:center;padding:30px 12px;color:#8aa19d;background:#fff;border-radius:18px}.form{display:grid;gap:13px}.field label{display:block;font-size:12px;color:#6f8985;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;border:1px solid #dce9e6;border-radius:13px;padding:12px;background:#fff;font:inherit;color:#18332f}.field textarea{min-height:80px;resize:vertical}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.actions{display:flex;gap:8px;margin-top:5px}.btn{flex:1;border:0;border-radius:14px;padding:12px;background:#16877a;color:#fff;font-weight:750}.btn.secondary{background:#edf7f4;color:#167b70}.btn.danger{background:#fff0f0;color:#c84d4d}.sheet{position:relative;background:#f8fcfb;border-radius:27px 27px 0 0;padding:18px 17px max(22px,env(safe-area-inset-bottom));max-height:92vh;overflow:auto;z-index:31}.modal{position:fixed;inset:0;z-index:30;display:flex;align-items:flex-end}.modal.hidden{display:none}.backdrop{position:absolute;inset:0;background:#0d29254f}.sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}.sheet-head h2{font-size:21px;margin:0}.tabs{display:flex;gap:7px;overflow:auto;margin:10px 0 16px}.tab{border:0;background:#fff;border-radius:13px;padding:9px 13px;color:#78908c;white-space:nowrap}.tab.active{background:#16877a;color:#fff}.chart{height:200px;background:#fff;border-radius:20px;padding:12px;box-shadow:0 5px 20px #17433b0a}.settings{display:grid;gap:9px}.setting{border:0;background:#fff;border-radius:18px;padding:16px;text-align:left;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 18px #17433b0a;color:#24413e;font:inherit}.setting span{color:#91a6a2}.med-card{background:#fff;border-radius:19px;padding:15px;margin-bottom:10px;box-shadow:0 4px 18px #17433b0a}.med-top{display:flex;justify-content:space-between;gap:10px}.med-top h3{margin:0;font-size:16px}.med-top p{margin:5px 0 0;color:#7b9490;font-size:12px}.pill{display:inline-flex;padding:5px 9px;border-radius:999px;background:#edf8f5;color:#168276;font-size:11px;font-weight:700}.mini-actions{display:flex;gap:7px;margin-top:12px}.mini-actions button{flex:1;border:0;border-radius:11px;padding:9px;background:#edf8f5;color:#177b70;font-weight:700}.search{width:100%;border:1px solid #dce9e6;border-radius:14px;padding:12px;background:#fff;font:inherit;margin-bottom:12px}.timeline-date{font-size:13px;color:#6f8985;margin:18px 3px 9px;font-weight:750}.timeline-item{position:relative;padding-left:25px;margin-bottom:11px}.timeline-item:before{content:"";position:absolute;left:5px;top:7px;width:9px;height:9px;border-radius:50%;background:#16877a;box-shadow:0 0 0 4px #e3f4f0}.timeline-card{background:#fff;border-radius:16px;padding:12px 14px;box-shadow:0 4px 15px #17433b09}.timeline-card .time{font-size:10px;color:#8aa09d}.timeline-card strong{display:block;margin-top:4px;font-size:14px}.timeline-card small{display:block;margin-top:3px;color:#79908c}@media(min-width:650px){.grid{grid-template-columns:repeat(3,1fr)}.quick-grid{grid-template-columns:repeat(4,1fr)}}
@@ -78,7 +816,7 @@
 
 </style>
 <title>我的健康</title>
-<meta name="app-version" content="4.3">
+<meta name="app-version" content="4.4">
 </head>
 <body>
 <div id="app">
